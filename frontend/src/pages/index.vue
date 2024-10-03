@@ -1,5 +1,4 @@
 <template>
-  <div class="home">
     <MessageList />
 
     <v-row
@@ -25,7 +24,6 @@
 
       <v-btn icon="mdi-send" size="large" class="ma-2" />
     </v-row>
-  </div>
 </template>
 
 <script lang="ts" setup></script>

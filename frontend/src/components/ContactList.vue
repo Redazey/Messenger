@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer location="left" permanent>
-    <v-list :items="items" lines="two" style="margin-top: 64px" item-props>
+    <v-list :items="items" lines="two" style="overflow-y:auto; max-height: calc(100vh - 64px); margin-top: 64px" item-props>
       <template v-slot:subtitle="{ subtitle }">
         <div v-html="subtitle"></div>
       </template>

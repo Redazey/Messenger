@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app style="overflow: hidden; height: 100vh;">
     <HeaderNav />
     <v-main>
       <ContactList />

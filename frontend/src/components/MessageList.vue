@@ -1,10 +1,5 @@
 <template>
-  <v-list
-    :items="items"
-    style="height: 100%; margin-top: 64px"
-    lines="three"
-    item-props
-  >
+  <v-list :items="items" lines="three" style="max-height: calc(100vh - 64px)" item-props>
     <template v-slot:subtitle="{ subtitle }">
       <div v-html="subtitle"></div>
     </template>

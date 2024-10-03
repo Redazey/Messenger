@@ -1,8 +1,7 @@
 <template>
   <v-toolbar
     color="cyan-lighten-1"
-    height="64"
-    style="z-index: 2000; position: fixed; top: 0; left: 0"
+    style="z-index: 2000; position: sticky; top: 0; left: 0"
   >
     <v-btn icon="mdi-menu" variant="text" />
 
