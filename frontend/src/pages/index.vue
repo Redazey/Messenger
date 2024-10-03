@@ -28,13 +28,4 @@
   </div>
 </template>
 
-<script>
-import MessageList from '@/components/MessageList.vue';
-
-export default {
-  name: 'HomeView',
-  components: {
-    MessageList,
-  },
-};
-</script>
+<script lang="ts" setup></script>
