@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { Contacts, Messages } from '../types';
-import { _get } from '@/api/apiClient';
 
 export const useContactsStore = defineStore('contactsStore', () => {
   // Состояние
@@ -10,42 +9,31 @@ export const useContactsStore = defineStore('contactsStore', () => {
   const messagesReceived = ref<Messages[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:3000';
 
-  // Действия
-  const fetchContacts = async () => {
-    loading.value = true;
-    try {
-      const response = await _get<Contacts[]>('/contacts');
-      contacts.value = response.data;
-    } catch (err) {
-      error.value = 'Failed to fetch contacts';
-    } finally {
-      loading.value = false;
-    }
-  };
+  // Подключение к SSE
+  const connectToSSE = () => {
+    const eventSource = new EventSource(BASE_URL + '/events/stream');
 
-  const fetchMessagesSent = async (contactId: number) => {
-    loading.value = true;
-    try {
-      const response = await _get<Messages[]>(`/messages/sent/${contactId}`);
-      messagesSent.value = response.data;
-    } catch (err) {
-      error.value = 'Failed to fetch sent messages';
-    } finally {
-      loading.value = false;
-    }
-  };
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        // Обновляем контакты или сообщения в зависимости от полученных данных
+        if (data.type === 'contacts') {
+          contacts.value = data.payload;
+        } else if (data.type === 'messageSent') {
+          messagesSent.value.push(data.payload);
+        } else if (data.type === 'messageReceived') {
+          messagesReceived.value.push(data.payload);
+        }
+      } catch (err) {
+        error.value = 'Failed to parse incoming data';
+      }
+    };
 
-  const fetchMessagesReceived = async (contactId: number) => {
-    loading.value = true;
-    try {
-      const response = await _get<Messages[]>(`/messages/received/${contactId}`);
-      messagesReceived.value = response.data;
-    } catch (err) {
-      error.value = 'Failed to fetch received messages';
-    } finally {
-      loading.value = false;
-    }
+    eventSource.onerror = () => {
+      error.value = 'Failed to connect to the server. Retrying...';
+    };
   };
 
   return {
@@ -54,8 +42,6 @@ export const useContactsStore = defineStore('contactsStore', () => {
     messagesReceived,
     loading,
     error,
-    fetchContacts,
-    fetchMessagesSent,
-    fetchMessagesReceived
+    connectToSSE,
   };
 });
