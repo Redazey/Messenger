@@ -6,7 +6,6 @@ export const useContactsStore = defineStore('contactsStore', () => {
   // Состояние
   const contacts = ref<Contacts[]>([]);
   const messagesSent = ref<Messages[]>([]);
-  const messagesReceived = ref<Messages[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
   const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:3000';
@@ -23,8 +22,6 @@ export const useContactsStore = defineStore('contactsStore', () => {
           contacts.value = data.payload;
         } else if (data.type === 'messageSent') {
           messagesSent.value.push(data.payload);
-        } else if (data.type === 'messageReceived') {
-          messagesReceived.value.push(data.payload);
         }
       } catch (err) {
         error.value = 'Failed to parse incoming data';
@@ -39,7 +36,6 @@ export const useContactsStore = defineStore('contactsStore', () => {
   return {
     contacts,
     messagesSent,
-    messagesReceived,
     loading,
     error,
     connectToSSE,

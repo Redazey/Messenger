@@ -1,71 +1,21 @@
 <template>
-  <v-list :items="items" lines="three" style="max-height: calc(100vh - 64px)" item-props>
-    <template v-slot:subtitle="{ subtitle }">
-      <div v-html="subtitle"></div>
-    </template>
+  <v-list style="height: 85%;">
+    <v-list-item v-for="(message, index) in messages" :key="index">
+      <v-list-item-content>
+        <v-list-item-title>{{ message.messageText }}</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
   </v-list>
 </template>
-<script>
-export default {
-  data: () => ({
-    items: [
-      {
-        prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-        title: 'Alex',
-        subtitle: `&mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
-      },
-      {
-        prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-        title: 'John',
-        subtitle: `&mdash; Wish I could come, but I'm out of town this weekend.`,
-      },
-      {
-        prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-        title: 'Maria',
-        subtitle:
-          '&mdash; Do you have Paris recommendations? Have you ever been?',
-      },
-      {
-        prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
-        title: 'Kate',
-        subtitle:
-          '&mdash; Have any ideas about what we should get Heidi for her birthday?',
-      },
-      {
-        prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
-        title: 'Sora',
-        subtitle:
-          '&mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos.',
-      },
-      {
-        prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-        title: 'Alex',
-        subtitle: `&mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
-      },
-      {
-        prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-        title: 'John',
-        subtitle: `&mdash; Wish I could come, but I'm out of town this weekend.`,
-      },
-      {
-        prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-        title: 'Maria',
-        subtitle:
-          '&mdash; Do you have Paris recommendations? Have you ever been?',
-      },
-      {
-        prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
-        title: 'Kate',
-        subtitle:
-          '&mdash; Have any ideas about what we should get Heidi for her birthday?',
-      },
-      {
-        prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
-        title: 'Sora',
-        subtitle:
-          '&mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos.',
-      },
-    ],
-  }),
-};
+<script lang="ts" setup>
+import { onMounted } from 'vue';
+import { useAppStore } from '@/stores/app';
+
+const appStore = useAppStore();
+const messages = appStore.getMessages;
+
+onMounted(() => {
+  appStore.setConn;
+  appStore.fetchMessagesSentToUser;
+});
 </script>
