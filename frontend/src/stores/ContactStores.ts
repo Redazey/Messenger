@@ -18,11 +18,14 @@ export const useContactsStore = defineStore('contactsStore', () => {
       try {
         const data = JSON.parse(event.data);
         // Обновляем контакты или сообщения в зависимости от полученных данных
-        if (data.type === 'contacts') {
-          contacts.value = data.payload;
-        } else if (data.type === 'messageSent') {
-          messagesSent.value.push(data.payload);
+
+        switch (data.type) {
+          case 'contacts': 
+            contacts.value = data.payload
+          case 'messageSent':
+            messagesSent.value.push(data.payload)
         }
+
       } catch (err) {
         error.value = 'Failed to parse incoming data';
       }

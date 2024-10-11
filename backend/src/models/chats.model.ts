@@ -1,28 +1,33 @@
-// src/models/chats.model.ts
-import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
-import { Messages } from './messages.model';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  AutoIncrement,
+  CreatedAt,
+  HasMany,
+} from 'sequelize-typescript';
+import { UsersChats } from './users_chats.model';
+import { Message } from './messages.model';
 
-@Table({ tableName: 'chats' })
-export class Chats extends Model<Chats> {
-  @Column({
-    type: DataType.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  })
+@Table({ tableName: 'chats', timestamps: false })
+export class Chat extends Model<Chat> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
   chat_id: number;
 
-  @Column({
-    type: DataType.STRING(100),
-    allowNull: false,
-  })
+  @Column({ type: DataType.STRING(100), allowNull: false })
   chat_name: string;
 
-  @Column({
-    type: DataType.DATE,
-    defaultValue: DataType.NOW,
-  })
+  @CreatedAt
+  @Column({ type: DataType.DATE })
   created_at: Date;
 
-  @HasMany(() => Messages)
-  messages: Messages[];
+  @HasMany(() => UsersChats)
+  usersChats: UsersChats[];
+
+  @HasMany(() => Message)
+  messages: Message[];
 }

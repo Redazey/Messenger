@@ -4,7 +4,6 @@ import { useContactsStore } from './ContactStores';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    // Your state variables here
   }),
   getters: {
     getContacts: () => {
@@ -22,17 +21,24 @@ export const useAppStore = defineStore('app', {
       contactsStore.connectToSSE();
     },
 
-    fetchMessagesSentToUser: async(userId: number) => {
+    fetchUserContacts: async(user_id: number) => {
       const contactsStore = useContactsStore();
       return computed(() => {
-        return contactsStore.messagesSent.filter((message) => message.chatId === userId);
+        return contactsStore.contacts.filter((contact) => contact.user_id === user_id);
       });
     },
 
-    fetchUsersContacts: async(userId: number) => {
+    fetchMessagesSentToUser: async(user_id: number) => {
       const contactsStore = useContactsStore();
       return computed(() => {
-        return contactsStore.contacts.filter((message) => message.userId === userId);
+        return contactsStore.messagesSent.filter((message) => message.user_id === user_id);
+      });
+    },
+
+    fetchUsersContacts: async(user_id: number) => {
+      const contactsStore = useContactsStore();
+      return computed(() => {
+        return contactsStore.contacts.filter((message) => message.user_id === user_id);
       });
     }
   },

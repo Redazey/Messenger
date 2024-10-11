@@ -1,40 +1,43 @@
-// src/models/users.model.ts
-import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
-import { Contacts } from './contacts.model';
-import { Messages } from './messages.model';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  AutoIncrement,
+  Unique,
+  CreatedAt,
+  HasMany,
+} from 'sequelize-typescript';
+import { UsersChats } from './users_chats.model';
+import { Message } from './messages.model';
+import { Contact } from './contacts.model';
 
-@Table({ tableName: 'users' })
-export class Users extends Model<Users> {
-  @Column({
-    type: DataType.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  })
+@Table({ tableName: 'users', timestamps: false })
+export class User extends Model<User> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
   user_id: number;
 
-  @Column({
-    type: DataType.STRING(50),
-    unique: true,
-    allowNull: false,
-  })
+  @Unique
+  @Column({ type: DataType.STRING(50), allowNull: false })
   username: string;
 
-  @Column({
-    type: DataType.STRING(100),
-    unique: true,
-    allowNull: false,
-  })
+  @Unique
+  @Column({ type: DataType.STRING(100), allowNull: false })
   email: string;
 
-  @Column({
-    type: DataType.DATE,
-    defaultValue: DataType.NOW,
-  })
+  @CreatedAt
+  @Column({ type: DataType.DATE })
   created_at: Date;
 
-  @HasMany(() => Contacts)
-  contacts: Contacts[];
+  @HasMany(() => UsersChats)
+  chats: UsersChats[];
 
-  @HasMany(() => Messages)
-  messages: Messages[];
+  @HasMany(() => Message)
+  messages: Message[];
+
+  @HasMany(() => Contact)
+  contacts: Contact[];
 }

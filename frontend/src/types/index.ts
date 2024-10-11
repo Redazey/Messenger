@@ -1,29 +1,34 @@
 export type Users = {
-  userId: number;
+  user_id: number;
   username: string;
   email: string;
   createdAt: string;
 };
 
 export type Chats = {
-  chatId: number;
+  chat_id: number;
   chatName: string;
   createdAt: string;
 };
 
 export type Contacts = {
-  contactId: number;
-  userId: number;
-  contactType: 'user' | 'chat';
-  friendId: number;
+  id: number;
+  user_id: number;
+  contact_id: number;
 };
+
+export type Users_chats = {
+  id: number;
+  chat_id: number;
+  user_id: number;
+  entered_at: string;
+}
 
 export type Messages = {
   messageId: number;
-  senderId: number;
-  chatId?: number;
-  contactType: 'user' | 'chat';
+  user_id: number;
+  chat_id?: number;
   messageText: string;
-  sentAt: string;
-  editAt?: string;
+  sent_at: string;
+  edit_at?: string;
 };
