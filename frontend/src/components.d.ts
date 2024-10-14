@@ -8,9 +8,12 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ContactList: typeof import('./components/ContactList.vue')['default']
+    copy: typeof import('./components/LoginForm copy.vue')['default']
     HeaderNav: typeof import('./components/HeaderNav.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    LoginForm: typeof import('./components/LoginForm.vue')['default']
     MessageList: typeof import('./components/MessageList.vue')['default']
+    MessageTextArea: typeof import('./components/MessageTextArea.vue')['default']
+    RegisterForm: typeof import('./components/RegisterForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

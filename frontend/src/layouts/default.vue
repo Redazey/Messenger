@@ -1,8 +1,6 @@
 <template>
   <v-app>
-    <HeaderNav />
     <v-main>
-      <ContactList />
       <router-view />
     </v-main>
   </v-app>
