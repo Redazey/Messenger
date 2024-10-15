@@ -29,6 +29,11 @@ export default {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      deleted: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       sent_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -38,9 +43,5 @@ export default {
         allowNull: true,
       },
     });
-  },
-
-  down: async (queryInterface: QueryInterface) => {
-    await queryInterface.dropTable('messages');
   },
 };

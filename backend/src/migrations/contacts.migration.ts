@@ -32,8 +32,4 @@ export default {
       name: 'unique_user_contact',
     });
   },
-
-  down: async (queryInterface: QueryInterface) => {
-    await queryInterface.dropTable('contacts');
-  },
 };

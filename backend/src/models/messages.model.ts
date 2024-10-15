@@ -29,6 +29,9 @@ export class Message extends Model<Message> {
   @Column({ type: DataType.TEXT, allowNull: false })
   message_text: string;
 
+  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  deleted: boolean;
+
   @CreatedAt
   @Column({ type: DataType.DATE })
   sent_at: Date;

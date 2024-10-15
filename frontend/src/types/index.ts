@@ -29,6 +29,7 @@ export type Messages = {
   user_id: number;
   chat_id?: number;
   messageText: string;
+  deleted: boolean;
   sent_at: string;
   edit_at?: string;
 };
