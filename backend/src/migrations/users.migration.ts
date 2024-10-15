@@ -23,6 +23,11 @@ export default {
         allowNull: false,
         unique: true,
       },
+      password: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        unique: true,
+      },
       created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,

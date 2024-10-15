@@ -57,7 +57,7 @@
       </v-list-item>
     </v-list>
 
-    <v-btn text="Log out" width="80%" style="margin-left: 20px"/>
+    <v-btn text="Log out" width="80%" style="margin-left: 20px" link to="Login"/>
   </v-navigation-drawer>
 </template>
 

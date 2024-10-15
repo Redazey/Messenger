@@ -1,5 +1,5 @@
 <template>
-  <v-list style="height: 85%;">
+  <v-list style="height: 75%;">
     <v-list-item v-for="(message, index) in messages" :key="index">
       <v-list-item-content>
         <v-list-item-title>{{ message.messageText }}</v-list-item-title>
