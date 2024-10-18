@@ -21,15 +21,6 @@ export default {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      contact_type: {
-        type: DataTypes.STRING(50), // Assuming you have a field called contact_type
-        allowNull: false,
-      },
-    });
-    await queryInterface.addConstraint('contacts', {
-      fields: ['user_id', 'contact_type', 'contact_id'],
-      type: 'unique',
-      name: 'unique_user_contact',
     });
   },
 };

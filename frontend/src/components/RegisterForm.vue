@@ -6,25 +6,24 @@
     </v-toolbar>
     <v-form ref="form" v-model="isValid" class="pa-5 pt-5">
       <v-text-field
-        v-model="username"
         color="deep-purple"
         label="Username"
         variant="filled"
       ></v-text-field>
       <v-text-field
         v-model="password"
-        :rules="[rules.password, rules.length(15)]"
+        :rules="[rules.password, rules.length(16)]"
         color="deep-purple"
-        counter="6"
+        counter="16"
         label="Password"
         type="password"
         variant="filled"
       ></v-text-field>
       <v-text-field
-        v-model="password"
-        :rules="[rules.confirm_password, rules.length(15)]"
+        v-model="confirm"
+        :rules="[rules.password, rules.length(16)]"
         color="deep-purple"
-        counter="6"
+        counter="16"
         label="Confirm password"
         type="password"
         variant="filled"
@@ -44,8 +43,6 @@
     </v-form>
     <v-divider></v-divider>
     <v-card-actions>
-      <v-btn variant="text" @click="form.reset()"> Clear </v-btn>
-      <v-spacer></v-spacer>
       <v-btn
         :loading="isLoading"
         color="deep-purple-accent-4"
@@ -93,24 +90,29 @@
   </v-card>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    agreement: false,
-    dialog: false,
-    isLoading: false,
-    password: undefined,
-    phone: undefined,
-    rules: {
-      length: (len) => (v) =>
-        (v || '').length >= len || `Invalid character length, required ${len}`,
-      password: (v) =>
-        !!(v || '').match(
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(_|[^\w])).+$/,
-        ) ||
-        'Password must contain an upper case letter, a numeric character, and a special character',
-      required: (v) => !!v || 'This field is required',
-    },
-  }),
-};
+<script lang="ts">
+  type ValidationResult = true | string;
+
+  export default {
+    data: () => ({
+      agreement: false,
+      isValid: false,
+      dialog: false,
+      isLoading: false,
+      confirm: undefined,
+      password: undefined,
+      phone: undefined,
+      rules: {
+        length: (len: number) => (value: string | null | undefined): ValidationResult =>
+          (value || '').length >= len || `Invalid character length, required ${len}`,
+
+        password: (value: string | null | undefined): ValidationResult =>
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(_|[^\w])).+$/.test(value || '') ||
+          'Password must contain an upper case letter, a numeric character, and a special character',
+
+        required: (value: string | null | undefined): ValidationResult =>
+          !!value || 'This field is required',
+      }
+    }),
+  };
 </script>

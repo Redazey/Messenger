@@ -20,6 +20,9 @@ export class User extends Model<User> {
   @Column
   user_id: number;
 
+  @Column({ type: DataType.STRING(50), allowNull: false })
+  password: string;
+
   @Unique
   @Column({ type: DataType.STRING(50), allowNull: false })
   username: string;
