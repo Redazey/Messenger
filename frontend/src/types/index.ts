@@ -33,3 +33,8 @@ export type Messages = {
   sent_at: string;
   edit_at?: string;
 };
+
+export type Callback = {
+  status: boolean,
+  data: any
+}
