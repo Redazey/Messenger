@@ -24,19 +24,22 @@ let AuthService = class AuthService {
             throw new common_1.UnauthorizedException();
         }
         const { user_id, email } = user;
-        const payload = { sub: user_id, username: email };
+        const payload = { sub: user_id, email: email };
         return {
             jwtToken: await this.jwtService.signAsync(payload),
         };
     }
     async register(credentials) {
-        const user = await this.userService.findOne(credentials.email);
+        let user = await this.userService.findOne(credentials.email);
         if (user) {
             throw new common_1.UnauthorizedException('User already exists');
         }
-        const payload = { sub: user.user_id, username: user.email };
+        user = await this.userService.create(credentials);
+        const payload = { sub: user.user_id, email: user.email };
+        const token = await this.jwtService.signAsync(payload);
         return {
-            jwtToken: await this.jwtService.signAsync(payload),
+            jwtToken: token,
+            verified: await this.jwtService.verifyAsync(token),
         };
     }
 };

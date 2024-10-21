@@ -2,9 +2,10 @@ import { Sequelize } from 'sequelize-typescript';
 import { dbConfig } from './constants';
 import { Dialect } from 'sequelize';
 import { UsersChats } from './users_chats.entity';
-import { Contact } from './contacts.entity';
-import { Message } from './messages.entity';
+import { Contact } from '../contacts/contacts.entity';
+import { Message } from '../messages/messages.entity';
 import { User } from '../users/users.entity';
+import { Chat } from '../chats/chats.entity';
 
 export const databaseProviders = [
   {
@@ -19,7 +20,7 @@ export const databaseProviders = [
           dialect: dbConfig.development.dialect as Dialect,
         }
       );
-      sequelize.addModels([UsersChats, UsersChats, Contact, Message, User]);
+      sequelize.addModels([UsersChats, Chat, Contact, Message, User]);
       await sequelize.sync();
       return sequelize;
     },

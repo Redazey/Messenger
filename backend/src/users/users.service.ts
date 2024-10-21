@@ -8,11 +8,19 @@ export class UsersService {
     private users: typeof User
   ) {}
 
-  async findOne(username: string): Promise<User | undefined> {
+  async findOne(email: string): Promise<User | undefined> {
     return this.users.findOne({
       where: {
-        email: username,
+        email: email,
       },
     });
+  }
+
+  async create(credentials: {
+    username: string;
+    email: string;
+    password: string;
+  }): Promise<User | undefined> {
+    return this.users.create(credentials);
   }
 }

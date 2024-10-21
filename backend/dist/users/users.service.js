@@ -18,12 +18,15 @@ let UsersService = class UsersService {
     constructor(users) {
         this.users = users;
     }
-    async findOne(username) {
+    async findOne(email) {
         return this.users.findOne({
             where: {
-                email: username,
+                email: email,
             },
         });
+    }
+    async create(credentials) {
+        return this.users.create(credentials);
     }
 };
 exports.UsersService = UsersService;

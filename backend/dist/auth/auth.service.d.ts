@@ -1,5 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
+import { CreateUserDto } from './registration.dto';
 export declare class AuthService {
     private userService;
     private jwtService;
@@ -10,10 +11,8 @@ export declare class AuthService {
     }): Promise<{
         jwtToken: string;
     }>;
-    register(credentials: {
-        email: string;
-        password: string;
-    }): Promise<{
+    register(credentials: CreateUserDto): Promise<{
         jwtToken: string;
+        verified: any;
     }>;
 }
