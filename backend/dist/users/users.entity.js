@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const users_chats_entity_1 = require("../database/users_chats.entity");
-const messages_entity_1 = require("../database/messages.entity");
-const contacts_entity_1 = require("../database/contacts.entity");
+const messages_entity_1 = require("../messages/messages.entity");
+const contacts_entity_1 = require("../contacts/contacts.entity");
 let User = class User extends sequelize_typescript_1.Model {
 };
 exports.User = User;

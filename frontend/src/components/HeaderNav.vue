@@ -26,20 +26,20 @@
   <v-navigation-drawer v-model="drawer" app temporary pa-5>
     <v-list-item
       prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
-      subtitle="sandra_a88@gmailcom"
-      title="Sandra Adams"
+      :subtitle="user?.email"
+      :title="user?.username"
     />
 
     <v-divider />
 
-    <v-list style="display: flex; flex-direction: column;">
+    <v-list style="display: flex; flex-direction: column">
       <v-list-item link to="settings" title="Settings">
         <template v-slot:prepend>
           <v-icon>mdi-cog</v-icon>
         </template>
       </v-list-item>
 
-      <v-list-item link @click="createChat" title="Create chat">
+      <v-list-item link title="Create chat">
         <template v-slot:prepend>
           <v-icon>mdi-message-plus</v-icon>
         </template>
@@ -50,42 +50,48 @@
           <v-icon>mdi-weather-night</v-icon>
         </template>
         <v-switch
-          v-model="isNightMode"
           inset
-          @change="toggleNightMode"
         ></v-switch>
       </v-list-item>
     </v-list>
 
-    <v-btn text="Log out" width="80%" style="margin-left: 20px" link to="Login"/>
+    <v-btn
+      text="Log out"
+      width="80%"
+      style="margin-left: 20px"
+      @click="logout"
+    />
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { useAppStore } from '@/stores/app';
 
-export default defineComponent({
-  name: 'ChatToolbar',
+export default {
+  data: () => ({
+    isLoading: false,
+    drawer: false,
+  }),
   setup() {
-    const drawer = ref(false);
-    const isNightMode = ref(false);
-
-    const createChat = () => {
-      // Handle chat creation
-      console.log('Creating a new Chat');
-    };
-
-    const toggleNightMode = () => {
-      // Handle toggling of night mode
-      console.log('Night Mode:', isNightMode.value);
-    };
-
-    return {
-      drawer,
-      isNightMode,
-      createChat,
-      toggleNightMode,
-    };
+    const auth = useAppStore();
+    onMounted(async () => {
+      await auth.FETCH_USER();
+    });
+    const user = computed(() => auth.user);
+    return { auth, user };
   },
-});
+  methods: {
+    async logout() {
+      this.isLoading = true;
+
+      try {
+        await this.auth.LOGOUT();
+      } catch (error) {
+        console.error('logout failed:', error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+  },
+};
 </script>

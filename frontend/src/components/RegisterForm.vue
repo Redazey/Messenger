@@ -46,7 +46,7 @@
       <v-btn
         :loading="isLoading"
         color="deep-purple-accent-4"
-        link to="Login"
+        link to="login"
       >
         Sign up
       </v-btn>

@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { CreateUserDto } from './registration.dto';
 import { Public } from 'src/common/decorators/public.decorator';
@@ -12,14 +20,20 @@ export class AuthController {
   @Post('login')
   signIn(@Body() signInDto: Record<string, any>) {
     return this.authService.signIn({
-      email: signInDto.username,
+      email: signInDto.email,
       password: signInDto.password,
     });
   }
 
   @Public()
   @Post('register')
-  regoster(@Body() createUserDto: CreateUserDto) {
+  register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return this.authService.getProfile(req);
   }
 }

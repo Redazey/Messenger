@@ -1,30 +1,31 @@
-export type Users = {
+export interface Users {
   user_id: number;
+  password: string;
   username: string;
   email: string;
-  createdAt: string;
-};
+  created_at: string | null;
+}
 
-export type Chats = {
+export interface Chats {
   chat_id: number;
   chatName: string;
   createdAt: string;
 };
 
-export type Contacts = {
+export interface Contacts {
   id: number;
   user_id: number;
   contact_id: number;
 };
 
-export type Users_chats = {
+export interface Users_chats {
   id: number;
   chat_id: number;
   user_id: number;
   entered_at: string;
 }
 
-export type Messages = {
+export interface Messages {
   messageId: number;
   user_id: number;
   chat_id?: number;
@@ -34,7 +35,7 @@ export type Messages = {
   edit_at?: string;
 };
 
-export type Callback = {
+export interface Callback {
   status: boolean,
   data: any
 }

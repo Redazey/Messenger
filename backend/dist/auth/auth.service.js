@@ -36,10 +36,17 @@ let AuthService = class AuthService {
         }
         user = await this.userService.create(credentials);
         const payload = { sub: user.user_id, email: user.email };
-        const token = await this.jwtService.signAsync(payload);
         return {
-            jwtToken: token,
-            verified: await this.jwtService.verifyAsync(token),
+            jwtToken: await this.jwtService.signAsync(payload),
+        };
+    }
+    async getProfile(req) {
+        const user = await this.userService.findOne(req.user.email);
+        if (!user) {
+            throw new common_1.UnauthorizedException('No user found');
+        }
+        return {
+            user,
         };
     }
 };

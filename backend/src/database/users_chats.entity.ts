@@ -9,7 +9,7 @@ import {
   CreatedAt,
 } from 'sequelize-typescript';
 import { User } from '../users/users.entity';
-import { Chat } from './chats.entity';
+import { Chat } from '../chats/chats.entity';
 
 @Table({ tableName: 'users_chats', timestamps: false })
 export class UsersChats extends Model<UsersChats> {

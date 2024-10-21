@@ -1,17 +1,19 @@
 import { defineStore } from 'pinia';
 import { useContactsStore } from './ContactStores';
-import { Callback, Chats, Messages, Users } from '@/types';
+import { Chats, Messages, Users } from '@/types';
 import axios from 'axios';
 import { ref } from 'vue';
+import router from '@/router';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:3000';
+const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:3001';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-		callback: ref<Callback>(),
-		chats: ref<Chats[]>([]),
-		user: ref<Users>(),
-		users: ref<Users[]>([]),
+    chats: ref<Chats[]>([]),
+    user: ref<Users | null>(),
+    token: ref<string | null>(),
+    returnUrl: ref<string | null>(),
+    users: ref<Users[]>([]),
     messages: ref<Messages[]>([]),
     loading: ref(false),
     error: ref<string | null>(null),
@@ -41,11 +43,17 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-		async CREATE_MESSAGE(from_user_id: number, to_chat_id: number, message: string) {
+    async CREATE_MESSAGE(
+      from_user_id: number,
+      to_chat_id: number,
+      message: string,
+    ) {
       try {
         this.loading = true;
-        let { data } = await axios.post(BASE_URL + `/users/${from_user_id}/chats/${to_chat_id}/messages`, message);
-        this.callback = data;
+        let { data } = await axios.post(
+          BASE_URL + `/users/${from_user_id}/chats/${to_chat_id}/messages`,
+          message,
+        );
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -54,8 +62,8 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-		// CONTACTS
-		async FETCH_CONTACTS(user_id: number) {
+    // CONTACTS
+    async FETCH_CONTACTS(user_id: number) {
       try {
         this.loading = true;
         let { data } = await axios.get(BASE_URL + `/users/${user_id}/contacts`);
@@ -68,11 +76,13 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-		async ADD_CONTACT(user_id: number, contact_id: number) {
+    async ADD_CONTACT(user_id: number, contact_id: number) {
       try {
         this.loading = true;
-        let { data } = await axios.post(BASE_URL + `/users/${user_id}/contacts`, contact_id);
-        this.callback = data;
+        let { data } = await axios.post(
+          BASE_URL + `/users/${user_id}/contacts`,
+          contact_id,
+        );
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -81,8 +91,8 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-		// CHATS
-		async FETCH_CHATS(user_id: number) {
+    // CHATS
+    async FETCH_CHATS(user_id: number) {
       try {
         this.loading = true;
         let { data } = await axios.get(BASE_URL + `/users/${user_id}/chats`);
@@ -95,11 +105,13 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-		async CREATE_CHAT(creator_id: number, participants: number[]) {
+    async CREATE_CHAT(creator_id: number, participants: number[]) {
       try {
         this.loading = true;
-        let { data } = await axios.post(BASE_URL + `/users/${creator_id}/chats`, participants);
-        this.callback = data;
+        let { data } = await axios.post(
+          BASE_URL + `/users/${creator_id}/chats`,
+          participants,
+        );
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -108,12 +120,16 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-		// USERS
-		async FETCH_USER(user_id: number) {
+    // AUTH
+    async FETCH_USER() {
       try {
         this.loading = true;
-        let { data } = await axios.get(BASE_URL + `/users/${user_id}`);
-        this.user = data;
+        let { data } = await axios.get(BASE_URL + `/auth/profile`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
+        this.user = data.user
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -122,11 +138,12 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-		async AUTH_USER(credentials: {email: string, password: string}) {
+    async AUTH_USER(credentials: { email: string; password: string }) {
       try {
         this.loading = true;
         let { data } = await axios.post(BASE_URL + `/auth/login`, credentials);
-        this.callback = data;
+        this.token = data.jwtToken
+        router.push(this.returnUrl || '/');
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -135,17 +152,28 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-		async REG_USER(credentials: {email: string, password: string}) {
+    async REG_USER(credentials: { email: string; password: string }) {
       try {
         this.loading = true;
-        let { data } = await axios.post(BASE_URL + `/auth/register`, credentials);
-        this.callback = data;
+        let { data } = await axios.post(
+          BASE_URL + `/auth/register`,
+          credentials,
+        );
+        this.token = data.jwtToken;
         this.loading = false;
       } catch (error: any) {
         this.error = error;
         this.loading = false;
         console.error(error);
       }
-    }
+    },
+
+    async LOGOUT() {
+      this.loading = true;
+      this.token = null;
+      this.user = null;
+      router.push('/login');
+      this.loading = false;
+    },
   },
 });

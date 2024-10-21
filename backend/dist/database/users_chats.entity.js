@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersChats = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
 const users_entity_1 = require("../users/users.entity");
-const chats_entity_1 = require("./chats.entity");
+const chats_entity_1 = require("../chats/chats.entity");
 let UsersChats = class UsersChats extends sequelize_typescript_1.Model {
 };
 exports.UsersChats = UsersChats;

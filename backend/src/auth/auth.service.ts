@@ -2,6 +2,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from './registration.dto';
+import { User } from 'src/users/users.entity';
 
 @Injectable()
 export class AuthService {
@@ -38,6 +39,16 @@ export class AuthService {
     const payload = { sub: user.user_id, email: user.email };
     return {
       jwtToken: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async getProfile(req: any): Promise<{ user: User }> {
+    const user = await this.userService.findOne(req.user.email);
+    if (!user) {
+      throw new UnauthorizedException('No user found');
+    }
+    return {
+      user,
     };
   }
 }

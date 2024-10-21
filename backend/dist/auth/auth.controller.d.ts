@@ -6,8 +6,10 @@ export declare class AuthController {
     signIn(signInDto: Record<string, any>): Promise<{
         jwtToken: string;
     }>;
-    regoster(createUserDto: CreateUserDto): Promise<{
+    register(createUserDto: CreateUserDto): Promise<{
         jwtToken: string;
-        verified: any;
+    }>;
+    getProfile(req: any): Promise<{
+        user: import("../users/users.entity").User;
     }>;
 }

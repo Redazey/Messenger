@@ -1,6 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from './registration.dto';
+import { User } from 'src/users/users.entity';
 export declare class AuthService {
     private userService;
     private jwtService;
@@ -13,6 +14,8 @@ export declare class AuthService {
     }>;
     register(credentials: CreateUserDto): Promise<{
         jwtToken: string;
-        verified: any;
+    }>;
+    getProfile(req: any): Promise<{
+        user: User;
     }>;
 }
