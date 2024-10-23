@@ -1,21 +1,64 @@
 <template>
-  <v-list style="height: 75%;">
-    <v-list-item v-for="(message, index) in messages" :key="index">
+  <v-list style="height: 75%">
+    <v-text-field
+      v-model="username"
+      append-inner-icon="mdi-magnify"
+      density="compact"
+      label="Search"
+      variant="solo"
+      hide-details
+      single-line
+      class="ma-2"
+      max-width="12%"
+      min-width="150px"
+      @input="find"
+    />
+    <v-list-item v-for="(user, index) in filteredUsers" :key="index">
       <v-list-item-content>
-        <v-list-item-title>{{ message.messageText }}</v-list-item-title>
+        <v-list-item-title>{{ user.username }}</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item v-if="isLoading">
+      <!-- Показываем индикатор загрузки -->
+      <v-list-item-content>
+        <v-list-item-title>Loading...</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
   </v-list>
 </template>
-<script lang="ts" setup>
-import { onMounted } from 'vue';
+
+<script lang="ts">
+import { computed } from 'vue';
 import { useAppStore } from '@/stores/app';
 
-const appStore = useAppStore();
-const messages = appStore.getMessages;
+export default {
+  data: () => ({
+    username: '',
+    isLoading: false,
+  }),
+  setup() {
+    const userStorage = useAppStore();
+    const filteredUsers = computed(() => userStorage.users);
 
-onMounted(() => {
-  appStore.setConn;
-  appStore.fetchMessagesSentToUser;
-});
+    return { filteredUsers };
+  },
+  methods: {
+    async find() {
+      if (!this.username) {
+        return;
+      }
+
+      this.isLoading = true;
+
+      try {
+        const userStorage = useAppStore();
+        await userStorage.FETCH_USERS({username: this.username});
+      } catch (error) {
+        console.error('Search failed:', error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+  },
+};
 </script>

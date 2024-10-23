@@ -3,18 +3,6 @@
     <!-- Menu button to toggle the drawer -->
     <v-btn icon="mdi-menu" variant="text" @click="drawer = !drawer" />
 
-    <v-text-field
-      append-inner-icon="mdi-magnify"
-      density="compact"
-      label="Search"
-      variant="solo"
-      hide-details
-      single-line
-      class="ma-2"
-      max-width="12%"
-      min-width="150px"
-    />
-
     <v-label
       class="ma-5"
       text="Chat-1"

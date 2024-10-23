@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { User } from './users.entity';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class UsersService {
@@ -12,6 +13,16 @@ export class UsersService {
     return this.users.findOne({
       where: {
         email: email,
+      },
+    });
+  }
+
+  async findByName(username: string): Promise<User[] | undefined> {
+    return this.users.findAll({
+      where: {
+        username: {
+          [Op.like]: `%${username}%`,
+        },
       },
     });
   }

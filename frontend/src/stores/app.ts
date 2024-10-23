@@ -4,7 +4,7 @@ import { Chats, Messages, Users } from '@/types';
 import axios from 'axios';
 import { ref } from 'vue';
 import router from '@/router';
-import { setCookie } from '@/utils/cookieUtils';
+import { eraseCookie, setCookie } from '@/utils/cookieUtils';
 import { cookies_consts } from '@/utils/cookie_constants';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:3001';
@@ -12,6 +12,7 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:3001';
 export const useAppStore = defineStore('app', {
   state: () => ({
     chats: ref<Chats[]>([]),
+    chat: ref<Chats | null>(),
     user: ref<Users | null>(),
     token: ref<string | null>(),
     returnUrl: ref<string | null>(),
@@ -123,6 +124,27 @@ export const useAppStore = defineStore('app', {
     },
 
     // AUTH
+    async FETCH_USERS(findBy: { username: string }) {
+      try {
+        this.loading = true;
+        let { data } = await axios.post(BASE_URL + `/users/find`, findBy, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
+        if (data.message == "Unauthorized") {
+          this.LOGOUT()
+        } else {
+          this.users = data;
+          this.loading = false;
+        }
+      } catch (error: any) {
+        this.error = error;
+        this.loading = false;
+        console.error(error);
+      }
+    },
+
     async FETCH_USER() {
       try {
         this.loading = true;
@@ -131,8 +153,12 @@ export const useAppStore = defineStore('app', {
             Authorization: `Bearer ${this.token}`,
           },
         });
-        this.user = data.user
-        this.loading = false;
+        if (data.message == "Unauthorized") {
+          this.LOGOUT()
+        } else {
+          this.user = data.user;
+          this.loading = false;
+        }
       } catch (error: any) {
         this.error = error;
         this.loading = false;
@@ -144,8 +170,8 @@ export const useAppStore = defineStore('app', {
       try {
         this.loading = true;
         let { data } = await axios.post(BASE_URL + `/auth/login`, credentials);
-        this.token = data.jwtToken
-        setCookie(cookies_consts.jwt, data.jwtToken, 14)
+        this.token = data.jwtToken;
+        setCookie(cookies_consts.jwt, data.jwtToken, 14);
         router.push(this.returnUrl || '/');
         this.loading = false;
       } catch (error: any) {
@@ -163,7 +189,7 @@ export const useAppStore = defineStore('app', {
           credentials,
         );
         this.token = data.jwtToken;
-        setCookie(cookies_consts.jwt, data.jwtToken, 14)
+        setCookie(cookies_consts.jwt, data.jwtToken, 14);
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -175,6 +201,7 @@ export const useAppStore = defineStore('app', {
     async LOGOUT() {
       this.loading = true;
       this.token = null;
+      eraseCookie(cookies_consts.jwt)
       this.user = null;
       router.push('/login');
       this.loading = false;

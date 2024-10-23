@@ -12,37 +12,28 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UsersService = void 0;
+exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
-const sequelize_1 = require("sequelize");
-let UsersService = class UsersService {
-    constructor(users) {
-        this.users = users;
+const users_service_1 = require("./users.service");
+let UsersController = class UsersController {
+    constructor(userService) {
+        this.userService = userService;
     }
-    async findOne(email) {
-        return this.users.findOne({
-            where: {
-                email: email,
-            },
-        });
-    }
-    async findByName(username) {
-        return this.users.findAll({
-            where: {
-                username: {
-                    [sequelize_1.Op.like]: `%${username}%`,
-                },
-            },
-        });
-    }
-    async create(credentials) {
-        return this.users.create(credentials);
+    signIn(signInDto) {
+        return this.userService.findByName(signInDto.username);
     }
 };
-exports.UsersService = UsersService;
-exports.UsersService = UsersService = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)('USERS_REPOSITORY')),
-    __metadata("design:paramtypes", [Object])
-], UsersService);
-//# sourceMappingURL=users.service.js.map
+exports.UsersController = UsersController;
+__decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, common_1.Post)('find'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "signIn", null);
+exports.UsersController = UsersController = __decorate([
+    (0, common_1.Controller)('users'),
+    __metadata("design:paramtypes", [users_service_1.UsersService])
+], UsersController);
+//# sourceMappingURL=users.controller.js.map
