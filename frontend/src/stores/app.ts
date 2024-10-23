@@ -4,6 +4,8 @@ import { Chats, Messages, Users } from '@/types';
 import axios from 'axios';
 import { ref } from 'vue';
 import router from '@/router';
+import { setCookie } from '@/utils/cookieUtils';
+import { cookies_consts } from '@/utils/cookie_constants';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:3001';
 
@@ -143,6 +145,7 @@ export const useAppStore = defineStore('app', {
         this.loading = true;
         let { data } = await axios.post(BASE_URL + `/auth/login`, credentials);
         this.token = data.jwtToken
+        setCookie(cookies_consts.jwt, data.jwtToken, 14)
         router.push(this.returnUrl || '/');
         this.loading = false;
       } catch (error: any) {
@@ -160,6 +163,7 @@ export const useAppStore = defineStore('app', {
           credentials,
         );
         this.token = data.jwtToken;
+        setCookie(cookies_consts.jwt, data.jwtToken, 14)
         this.loading = false;
       } catch (error: any) {
         this.error = error;

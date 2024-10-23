@@ -5,15 +5,17 @@
  */
 
 // Composables
-import { createRouter, createWebHistory } from 'vue-router/auto'
-import { setupLayouts } from 'virtual:generated-layouts'
-import { routes } from 'vue-router/auto-routes'
+import { createRouter, createWebHistory } from 'vue-router/auto';
+import { setupLayouts } from 'virtual:generated-layouts';
+import { routes } from 'vue-router/auto-routes';
 import { useAppStore } from '@/stores/app';
+import { getCookie } from '@/utils/cookieUtils';
+import { cookies_consts } from '@/utils/cookie_constants';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: setupLayouts(routes),
-})
+});
 
 router.beforeEach(async (to) => {
   // redirect to login page if not logged in and trying to access a restricted page
@@ -22,8 +24,14 @@ router.beforeEach(async (to) => {
   const auth = useAppStore();
 
   if (authRequired && auth.token == null) {
+    const cookieJWT = getCookie(cookies_consts.jwt);
+
+    if (cookieJWT == null) {
       auth.returnUrl = to.fullPath;
       return '/login';
+    } else {
+      auth.token = cookieJWT;
+    }
   }
 });
 
@@ -31,19 +39,19 @@ router.beforeEach(async (to) => {
 router.onError((err, to) => {
   if (err?.message?.includes?.('Failed to fetch dynamically imported module')) {
     if (!localStorage.getItem('vuetify:dynamic-reload')) {
-      console.log('Reloading page to fix dynamic import error')
-      localStorage.setItem('vuetify:dynamic-reload', 'true')
-      location.assign(to.fullPath)
+      console.log('Reloading page to fix dynamic import error');
+      localStorage.setItem('vuetify:dynamic-reload', 'true');
+      location.assign(to.fullPath);
     } else {
-      console.error('Dynamic import error, reloading page did not fix it', err)
+      console.error('Dynamic import error, reloading page did not fix it', err);
     }
   } else {
-    console.error(err)
+    console.error(err);
   }
-})
+});
 
 router.isReady().then(() => {
-  localStorage.removeItem('vuetify:dynamic-reload')
-})
+  localStorage.removeItem('vuetify:dynamic-reload');
+});
 
-export default router
+export default router;
