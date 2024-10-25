@@ -19,9 +19,10 @@ export class UsersService {
 
   async findByName(username: string): Promise<User[] | undefined> {
     return this.users.findAll({
+      attributes: ['user_id', 'username'],
       where: {
         username: {
-          [Op.like]: `%${username}%`,
+          [Op.iLike]: `%${username}%`,
         },
       },
     });

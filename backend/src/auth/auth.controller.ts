@@ -31,7 +31,6 @@ export class AuthController {
     return this.authService.register(createUserDto);
   }
 
-  @HttpCode(HttpStatus.OK)
   @Get('profile')
   getProfile(@Request() req) {
     return this.authService.getProfile(req);

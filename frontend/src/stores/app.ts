@@ -201,6 +201,9 @@ export const useAppStore = defineStore('app', {
     async LOGOUT() {
       this.loading = true;
       this.token = null;
+      let { data } = await axios.post(
+        BASE_URL + `/users/logout`,
+      );
       eraseCookie(cookies_consts.jwt)
       this.user = null;
       router.push('/login');

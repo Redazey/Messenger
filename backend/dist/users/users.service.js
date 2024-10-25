@@ -28,9 +28,10 @@ let UsersService = class UsersService {
     }
     async findByName(username) {
         return this.users.findAll({
+            attributes: ['user_id', 'username'],
             where: {
                 username: {
-                    [sequelize_1.Op.like]: `%${username}%`,
+                    [sequelize_1.Op.iLike]: `%${username}%`,
                 },
             },
         });

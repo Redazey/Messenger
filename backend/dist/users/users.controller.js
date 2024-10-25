@@ -22,6 +22,10 @@ let UsersController = class UsersController {
     signIn(signInDto) {
         return this.userService.findByName(signInDto.username);
     }
+    logout(res) {
+        res.clearCookie('jwt-token');
+        res.sendStatus(401);
+    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -32,6 +36,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "signIn", null);
+__decorate([
+    (0, common_1.Post)('logout'),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "logout", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])
