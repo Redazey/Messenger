@@ -4,7 +4,7 @@ exports.contactProvider = void 0;
 const contacts_entity_1 = require("./contacts.entity");
 exports.contactProvider = [
     {
-        provide: 'CONTACT_REPOSITORY',
+        provide: 'CONTACTS_REPOSITORY',
         useValue: contacts_entity_1.Contact,
     },
 ];

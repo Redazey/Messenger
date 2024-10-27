@@ -1,5 +1,5 @@
 import { Message } from './messages.entity';
-export const chatProviders = [
+export const messageProviders = [
   {
     provide: 'MESSAGE_REPOSITORY',
     useValue: Message,

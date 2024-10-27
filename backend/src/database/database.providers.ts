@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize-typescript';
 import { dbConfig } from './constants';
 import { Dialect } from 'sequelize';
-import { UsersChats } from './users_chats.entity';
+import { UsersChats } from 'src/users_chats/users_chats.entity';
 import { Contact } from '../contacts/contacts.entity';
 import { Message } from '../messages/messages.entity';
 import { User } from '../users/users.entity';

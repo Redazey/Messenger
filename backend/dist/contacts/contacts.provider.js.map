@@ -1,1 +1,1 @@
-{"version":3,"file":"contacts.provider.js","sourceRoot":"","sources":["../../src/contacts/contacts.provider.ts"],"names":[],"mappings":";;;AAAA,uDAA4C;AAE/B,QAAA,eAAe,GAAG;IAC7B;QACE,OAAO,EAAE,oBAAoB;QAC7B,QAAQ,EAAE,yBAAO;KAClB;CACF,CAAC"}
+{"version":3,"file":"contacts.provider.js","sourceRoot":"","sources":["../../src/contacts/contacts.provider.ts"],"names":[],"mappings":";;;AAAA,uDAA4C;AAE/B,QAAA,eAAe,GAAG;IAC7B;QACE,OAAO,EAAE,qBAAqB;QAC9B,QAAQ,EAAE,yBAAO;KAClB;CACF,CAAC"}

@@ -9,18 +9,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const auth_module_1 = require("./auth/auth.module");
-const contacts_controller_1 = require("./contacts/contacts.controller");
-const contacts_module_1 = require("./contacts/contacts.module");
-const messages_module_1 = require("./messages/messages.module");
-const chats_controller_1 = require("./chats/chats.controller");
 const chats_module_1 = require("./chats/chats.module");
+const database_module_1 = require("./database/database.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule, contacts_module_1.ContactsModule, messages_module_1.MessagesModule, chats_module_1.ChatsModule],
-        controllers: [contacts_controller_1.ContactsController, chats_controller_1.ChatsController],
+        imports: [database_module_1.DatabaseModule, auth_module_1.AuthModule, chats_module_1.ChatsModule],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

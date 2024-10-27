@@ -8,10 +8,25 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContactsModule = void 0;
 const common_1 = require("@nestjs/common");
+const contacts_service_1 = require("./contacts.service");
+const chats_module_1 = require("../chats/chats.module");
+const contacts_entity_1 = require("./contacts.entity");
+const contacts_controller_1 = require("./contacts.controller");
+const database_module_1 = require("../database/database.module");
 let ContactsModule = class ContactsModule {
 };
 exports.ContactsModule = ContactsModule;
 exports.ContactsModule = ContactsModule = __decorate([
-    (0, common_1.Module)({})
+    (0, common_1.Module)({
+        imports: [chats_module_1.ChatsModule, database_module_1.DatabaseModule],
+        providers: [
+            contacts_service_1.ContactsService,
+            {
+                provide: 'CONTACTS_REPOSITORY',
+                useValue: contacts_entity_1.Contact,
+            },
+        ],
+        controllers: [contacts_controller_1.ContactsController],
+    })
 ], ContactsModule);
 //# sourceMappingURL=contacts.module.js.map

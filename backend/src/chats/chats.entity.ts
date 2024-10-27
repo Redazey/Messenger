@@ -8,8 +8,8 @@ import {
   CreatedAt,
   HasMany,
 } from 'sequelize-typescript';
-import { UsersChats } from '../database/users_chats.entity';
 import { Message } from '../messages/messages.entity';
+import { UsersChats } from '../users_chats/users_chats.entity';
 
 @Table({ tableName: 'chats', timestamps: false })
 export class Chat extends Model<Chat> {

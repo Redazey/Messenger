@@ -79,12 +79,12 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    async ADD_CONTACT(user_id: number, contact_id: number) {
+    async ADD_CONTACT(chatname: string, user_id: number, contact_id: number) {
       try {
         this.loading = true;
         let { data } = await axios.post(
-          BASE_URL + `/users/${user_id}/contacts`,
-          contact_id,
+          BASE_URL + `/contacts/newContact`,
+          {chatname, user_id, contact_id},
         );
         this.loading = false;
       } catch (error: any) {
@@ -98,7 +98,7 @@ export const useAppStore = defineStore('app', {
     async FETCH_CHATS(user_id: number) {
       try {
         this.loading = true;
-        let { data } = await axios.get(BASE_URL + `/users/${user_id}/chats`);
+        let { data } = await axios.post(BASE_URL + `/chats/getChats`, user_id);
         this.chats = data;
         this.loading = false;
       } catch (error: any) {
