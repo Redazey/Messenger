@@ -4,7 +4,7 @@ import { Chats, Messages, Users } from '@/types';
 import axios from 'axios';
 import { ref } from 'vue';
 import router from '@/router';
-import { eraseCookie, setCookie } from '@/utils/cookieUtils';
+import { eraseCookie, getCookie, setCookie } from '@/utils/cookieUtils';
 import { cookies_consts } from '@/utils/cookie_constants';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:3001';
@@ -69,7 +69,14 @@ export const useAppStore = defineStore('app', {
     async FETCH_CONTACTS(user_id: number) {
       try {
         this.loading = true;
-        let { data } = await axios.get(BASE_URL + `/users/${user_id}/contacts`);
+        let { data } = await axios.get(
+          BASE_URL + `/contacts/getContacts/${user_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          },
+        );
         this.users = data;
         this.loading = false;
       } catch (error: any) {
@@ -79,13 +86,23 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    async ADD_CONTACT(chatname: string, user_id: number, contact_id: number) {
+    async ADD_CONTACT(credentials: {
+      chatname: string;
+      user_id: number;
+      contact_id: number;
+    }) {
       try {
         this.loading = true;
         let { data } = await axios.post(
           BASE_URL + `/contacts/newContact`,
-          {chatname, user_id, contact_id},
+          credentials,
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          },
         );
+        this.users.push(data);
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -98,7 +115,11 @@ export const useAppStore = defineStore('app', {
     async FETCH_CHATS(user_id: number) {
       try {
         this.loading = true;
-        let { data } = await axios.post(BASE_URL + `/chats/getChats`, user_id);
+        let { data } = await axios.post(BASE_URL + `/chats/getChats/${user_id}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
         this.chats = data;
         this.loading = false;
       } catch (error: any) {
@@ -108,12 +129,15 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    async CREATE_CHAT(creator_id: number, participants: number[]) {
+    async CREATE_CHAT(credentials: {
+      creator_id: number;
+      participants: number[];
+    }) {
       try {
         this.loading = true;
         let { data } = await axios.post(
-          BASE_URL + `/users/${creator_id}/chats`,
-          participants,
+          BASE_URL + `/users/${credentials}/chats`,
+          credentials,
         );
         this.loading = false;
       } catch (error: any) {
@@ -132,8 +156,8 @@ export const useAppStore = defineStore('app', {
             Authorization: `Bearer ${this.token}`,
           },
         });
-        if (data.message == "Unauthorized") {
-          this.LOGOUT()
+        if (data.message == 'Unauthorized') {
+          this.LOGOUT();
         } else {
           this.users = data;
           this.loading = false;
@@ -148,13 +172,14 @@ export const useAppStore = defineStore('app', {
     async FETCH_USER() {
       try {
         this.loading = true;
+        this.token = getCookie(cookies_consts.jwt)
         let { data } = await axios.get(BASE_URL + `/auth/profile`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
           },
         });
-        if (data.message == "Unauthorized") {
-          this.LOGOUT()
+        if (data.message == 'Unauthorized') {
+          this.LOGOUT();
         } else {
           this.user = data.user;
           this.loading = false;
@@ -163,6 +188,7 @@ export const useAppStore = defineStore('app', {
         this.error = error;
         this.loading = false;
         console.error(error);
+        return null;
       }
     },
 
@@ -201,10 +227,8 @@ export const useAppStore = defineStore('app', {
     async LOGOUT() {
       this.loading = true;
       this.token = null;
-      let { data } = await axios.post(
-        BASE_URL + `/users/logout`,
-      );
-      eraseCookie(cookies_consts.jwt)
+      let { data } = await axios.post(BASE_URL + `/users/logout`);
+      eraseCookie(cookies_consts.jwt);
       this.user = null;
       router.push('/login');
       this.loading = false;

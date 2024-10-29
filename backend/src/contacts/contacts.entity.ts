@@ -6,6 +6,7 @@ import {
   PrimaryKey,
   AutoIncrement,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { User } from '../users/users.entity';
 
@@ -22,4 +23,7 @@ export class Contact extends Model<Contact> {
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   contact_id: number;
+
+  @BelongsTo(() => User, 'contact_id')
+  contact: User;
 }

@@ -30,6 +30,10 @@ __decorate([
     (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.INTEGER, allowNull: false }),
     __metadata("design:type", Number)
 ], Contact.prototype, "contact_id", void 0);
+__decorate([
+    (0, sequelize_typescript_1.BelongsTo)(() => users_entity_1.User, 'contact_id'),
+    __metadata("design:type", users_entity_1.User)
+], Contact.prototype, "contact", void 0);
 exports.Contact = Contact = __decorate([
     (0, sequelize_typescript_1.Table)({ tableName: 'contacts', timestamps: false })
 ], Contact);

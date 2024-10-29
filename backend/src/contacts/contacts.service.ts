@@ -1,22 +1,68 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Contact } from './contacts.entity';
+import { User } from 'src/users/users.entity';
 
 @Injectable()
 export class ContactsService {
-  constructor(private contacts: typeof Contact) {}
+  constructor(
+    @Inject('CONTACTS_REPOSITORY') private contacts: typeof Contact,
+    @Inject('USERS_REPOSITORY') private users: typeof User
+  ) {}
 
-  async findAll(user_id: number): Promise<Contact[] | undefined> {
-    return this.contacts.findAll({
+  async findAll(user_id: number): Promise<User[] | undefined> {
+    const contacts = await this.contacts.findAll({
+      where: { user_id: user_id },
+      include: [
+        {
+          model: User,
+          attributes: ['username', 'user_id'],
+          as: 'contact',
+          required: true,
+        },
+      ],
+    });
+
+    return contacts.map(contact => contact.get('contact') as User);
+  }
+
+  async delete(credentials: { user_id: number; contact_id: number }) {
+    this.contacts.truncate({
       where: {
-        user_id: user_id,
+        user_id: credentials.user_id,
+        contact_id: credentials.contact_id,
       },
     });
+    return this.contacts.truncate({
+      where: {
+        user_id: credentials.contact_id,
+        contact_id: credentials.user_id,
+      },
+    });
+  }
+
+  async isExists(credentials: {
+    user_id: number;
+    contact_id: number;
+  }): Promise<Contact | undefined> {
+    const contact = this.contacts.findOne({
+      where: {
+        user_id: credentials.contact_id,
+      },
+    });
+    return contact;
   }
 
   async create(credentials: {
     user_id: number;
     contact_id: number;
   }): Promise<Contact | undefined> {
-    return this.contacts.create(credentials);
+    this.contacts.create({
+      user_id: credentials.user_id,
+      contact_id: credentials.contact_id,
+    });
+    return this.contacts.create({
+      user_id: credentials.contact_id,
+      contact_id: credentials.user_id,
+    });
   }
 }

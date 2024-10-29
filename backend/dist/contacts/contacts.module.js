@@ -9,10 +9,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContactsModule = void 0;
 const common_1 = require("@nestjs/common");
 const contacts_service_1 = require("./contacts.service");
-const chats_module_1 = require("../chats/chats.module");
 const contacts_entity_1 = require("./contacts.entity");
 const contacts_controller_1 = require("./contacts.controller");
 const database_module_1 = require("../database/database.module");
+const chats_module_1 = require("../chats/chats.module");
 let ContactsModule = class ContactsModule {
 };
 exports.ContactsModule = ContactsModule;
@@ -25,7 +25,12 @@ exports.ContactsModule = ContactsModule = __decorate([
                 provide: 'CONTACTS_REPOSITORY',
                 useValue: contacts_entity_1.Contact,
             },
+            {
+                provide: 'USERS_REPOSITORY',
+                useValue: contacts_entity_1.Contact,
+            },
         ],
+        exports: [contacts_service_1.ContactsService],
         controllers: [contacts_controller_1.ContactsController],
     })
 ], ContactsModule);

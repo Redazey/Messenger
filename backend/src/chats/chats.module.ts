@@ -14,7 +14,7 @@ import { UsersChats } from 'src/users_chats/users_chats.entity';
       useValue: Chat,
     },
     {
-      provide: 'USERS_CHATS_REPOSITORY', // Добавляем UsersChats в качестве провайдера
+      provide: 'USERS_CHATS_REPOSITORY',
       useValue: UsersChats,
     },
   ],

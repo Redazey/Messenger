@@ -9,8 +9,6 @@ import { createRouter, createWebHistory } from 'vue-router/auto';
 import { setupLayouts } from 'virtual:generated-layouts';
 import { routes } from 'vue-router/auto-routes';
 import { useAppStore } from '@/stores/app';
-import { getCookie } from '@/utils/cookieUtils';
-import { cookies_consts } from '@/utils/cookie_constants';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,15 +21,8 @@ router.beforeEach(async (to) => {
   const authRequired = !publicPages.includes(to.path);
   const auth = useAppStore();
 
-  if (authRequired && auth.token == null) {
-    const cookieJWT = getCookie(cookies_consts.jwt);
-
-    if (cookieJWT == null) {
-      auth.returnUrl = to.fullPath;
-      return '/login';
-    } else {
-      auth.token = cookieJWT;
-    }
+  if (authRequired) {
+    await auth.FETCH_USER()
   }
 });
 

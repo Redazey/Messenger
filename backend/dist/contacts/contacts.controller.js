@@ -22,7 +22,7 @@ let ContactsController = class ContactsController {
         this.chatsService = chatsService;
         this.contactsService = contactsService;
     }
-    signIn(newContactDto) {
+    newContact(newContactDto) {
         this.contactsService.create({
             user_id: newContactDto.user_id,
             contact_id: newContactDto.contact_id,
@@ -32,6 +32,16 @@ let ContactsController = class ContactsController {
             user_id: [newContactDto.user_id, newContactDto.contact_id],
         });
     }
+    deleteContact(deleteContactDto) {
+        return this.chatsService.create({
+            name: deleteContactDto.chatname,
+            user_id: [deleteContactDto.user_id, deleteContactDto.contact_id],
+        });
+    }
+    getContacts(user_id) {
+        const contacts = this.contactsService.findAll(user_id);
+        return contacts;
+    }
 };
 exports.ContactsController = ContactsController;
 __decorate([
@@ -40,7 +50,21 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [newcontact_dto_1.NewContactDto]),
     __metadata("design:returntype", void 0)
-], ContactsController.prototype, "signIn", null);
+], ContactsController.prototype, "newContact", null);
+__decorate([
+    (0, common_1.Post)('deleteContact'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [newcontact_dto_1.NewContactDto]),
+    __metadata("design:returntype", void 0)
+], ContactsController.prototype, "deleteContact", null);
+__decorate([
+    (0, common_1.Get)('getContacts/:user_id'),
+    __param(0, (0, common_1.Param)('user_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], ContactsController.prototype, "getContacts", null);
 exports.ContactsController = ContactsController = __decorate([
     (0, common_1.Controller)('contacts'),
     __metadata("design:paramtypes", [chats_service_1.ChatsService,

@@ -1,8 +1,11 @@
 <template>
   <HeaderNav />
   <ContactList />
-  <MessageList />
-  <MessageTextArea />
+  <main>
+    <MessageList />
+    <MessageTextArea />
+  </main>
+  
 </template>
 
 <script lang="ts" setup></script>

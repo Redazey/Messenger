@@ -19,18 +19,18 @@ let ChatsController = class ChatsController {
     constructor(chatsService) {
         this.chatsService = chatsService;
     }
-    signIn(user_id) {
+    getChats(user_id) {
         return this.chatsService.findAll(user_id);
     }
 };
 exports.ChatsController = ChatsController;
 __decorate([
-    (0, common_1.Post)('getChats'),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Post)('getChats/:user_id'),
+    __param(0, (0, common_1.Param)('user_id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
-], ChatsController.prototype, "signIn", null);
+], ChatsController.prototype, "getChats", null);
 exports.ChatsController = ChatsController = __decorate([
     (0, common_1.Controller)('chats'),
     __metadata("design:paramtypes", [chats_service_1.ChatsService])
