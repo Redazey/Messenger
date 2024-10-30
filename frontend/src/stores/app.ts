@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { useContactsStore } from './ContactStores';
 import { Chats, Messages, Users } from '@/types';
 import axios from 'axios';
 import { ref } from 'vue';
@@ -8,6 +7,22 @@ import { eraseCookie, getCookie, setCookie } from '@/utils/cookieUtils';
 import { cookies_consts } from '@/utils/cookie_constants';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:3001';
+const axiosInstance = axios.create({
+  baseURL: BASE_URL,
+});
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = getCookie(cookies_consts.jwt);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const useAppStore = defineStore('app', {
   state: () => ({
@@ -44,7 +59,7 @@ export const useAppStore = defineStore('app', {
     async FETCH_MESSAGES(user_id: number) {
       try {
         this.loading = true;
-        let { data } = await axios.get(BASE_URL + `/users/${user_id}/messages`);
+        let { data } = await axiosInstance.get(BASE_URL + `/users/${user_id}/messages`);
         this.messages = data;
         this.loading = false;
       } catch (error: any) {
@@ -61,7 +76,7 @@ export const useAppStore = defineStore('app', {
     ) {
       try {
         this.loading = true;
-        let { data } = await axios.post(
+        let { data } = await axiosInstance.post(
           BASE_URL + `/users/${from_user_id}/chats/${to_chat_id}/messages`,
           message,
         );
@@ -77,14 +92,8 @@ export const useAppStore = defineStore('app', {
     async FETCH_CONTACTS(user_id: number) {
       try {
         this.loading = true;
-        let { data } = await axios.get(
-          BASE_URL + `/contacts/getContacts/${user_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-          },
-        );
+        let { data } = await axiosInstance.get(
+          BASE_URL + `/contacts/getContacts/${user_id}`);
         this.contacts = data;
         this.loading = false;
       } catch (error: any) {
@@ -100,15 +109,9 @@ export const useAppStore = defineStore('app', {
     }) {
       try {
         this.loading = true;
-        let { data } = await axios.post(
+        let { data } = await axiosInstance.post(
           BASE_URL + `/contacts/newContact`,
-          credentials,
-          {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-          },
-        );
+          credentials);
         this.contacts.push(data);
         this.loading = false;
       } catch (error: any) {
@@ -121,14 +124,8 @@ export const useAppStore = defineStore('app', {
     async FETCH_CHATS(user_id: number) {
       try {
         this.loading = true;
-        let { data } = await axios.get(
-          BASE_URL + `/chats/getChats/${user_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-          },
-        );
+        let { data } = await axiosInstance.get(
+          BASE_URL + `/chats/getChats/${user_id}`);
         this.chats = data;
         this.loading = false;
       } catch (error: any) {
@@ -143,7 +140,7 @@ export const useAppStore = defineStore('app', {
     }) {
       try {
         this.loading = true;
-        let { data } = await axios.post(
+        let { data } = await axiosInstance.post(
           BASE_URL + `/users/${credentials}/chats`,
           credentials,
         );
@@ -158,11 +155,7 @@ export const useAppStore = defineStore('app', {
     async FETCH_USERS(findBy: { username: string }) {
       try {
         this.loading = true;
-        let { data } = await axios.post(BASE_URL + `/users/find`, findBy, {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-        });
+        let { data } = await axiosInstance.post(BASE_URL + `/users/find`, findBy);
         if (data.message == 'Unauthorized') {
           this.LOGOUT();
         } else {
@@ -179,11 +172,7 @@ export const useAppStore = defineStore('app', {
       try {
         this.loading = true;
         this.token = getCookie(cookies_consts.jwt);
-        let { data } = await axios.get(BASE_URL + `/auth/profile`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-        });
+        let { data } = await axiosInstance.get(BASE_URL + `/auth/profile`);
         this.user = data.user;
         this.loading = false;
       } catch (error: any) {
@@ -197,7 +186,7 @@ export const useAppStore = defineStore('app', {
     async AUTH_USER(credentials: { email: string; password: string }) {
       try {
         this.loading = true;
-        let { data } = await axios.post(BASE_URL + `/auth/login`, credentials);
+        let { data } = await axiosInstance.post(BASE_URL + `/auth/login`, credentials);
         this.token = data.jwtToken;
         setCookie(cookies_consts.jwt, data.jwtToken, 14);
         router.push(this.returnUrl || '/');
@@ -211,7 +200,7 @@ export const useAppStore = defineStore('app', {
     async REG_USER(credentials: { email: string; password: string }) {
       try {
         this.loading = true;
-        let { data } = await axios.post(
+        let { data } = await axiosInstance.post(
           BASE_URL + `/auth/register`,
           credentials,
         );
@@ -228,7 +217,7 @@ export const useAppStore = defineStore('app', {
       this.loading = true;
       this.token = null;
       try{
-        let { data } = await axios.post(BASE_URL + `/users/logout`);
+        let { data } = await axiosInstance.post(BASE_URL + `/users/logout`);
       }
       catch (error: any) {
         this.error = error;
