@@ -22,7 +22,7 @@ router.beforeEach(async (to) => {
   const auth = useAppStore();
 
   if (authRequired) {
-    await auth.FETCH_USER()
+    await auth.FETCH_USER();
   }
 });
 

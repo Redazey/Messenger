@@ -17,19 +17,27 @@ export const useAppStore = defineStore('app', {
     token: ref<string | null>(),
     returnUrl: ref<string | null>(),
     users: ref<Users[]>([]),
+    contacts: ref<Users[]>([]),
     messages: ref<Messages[]>([]),
     loading: ref(false),
     error: ref<string | null>(null),
   }),
   getters: {
-    getContacts: () => {
-      const contactsStore = useContactsStore();
-      return contactsStore.contacts;
+    getContacts: (state) => {
+      return state.contacts;
     },
-    getMessages: () => {
-      const contactsStore = useContactsStore();
-      return contactsStore.messagesSent;
+    getMessages: (state) => {
+      return state.messages;
     },
+    getUsers: (state) => {
+      return state.users;
+    },
+    getUser: (state) => {
+      return state.user;
+    },
+    getChats: (state) => {
+      return state.chats;
+    }
   },
   actions: {
     // MESSAGES
@@ -77,12 +85,11 @@ export const useAppStore = defineStore('app', {
             },
           },
         );
-        this.users = data;
+        this.contacts = data;
         this.loading = false;
       } catch (error: any) {
         this.error = error;
         this.loading = false;
-        console.error(error);
       }
     },
 
@@ -102,12 +109,11 @@ export const useAppStore = defineStore('app', {
             },
           },
         );
-        this.users.push(data);
+        this.contacts.push(data);
         this.loading = false;
       } catch (error: any) {
         this.error = error;
         this.loading = false;
-        console.error(error);
       }
     },
 
@@ -115,17 +121,19 @@ export const useAppStore = defineStore('app', {
     async FETCH_CHATS(user_id: number) {
       try {
         this.loading = true;
-        let { data } = await axios.post(BASE_URL + `/chats/getChats/${user_id}`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
+        let { data } = await axios.get(
+          BASE_URL + `/chats/getChats/${user_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
           },
-        });
+        );
         this.chats = data;
         this.loading = false;
       } catch (error: any) {
         this.error = error;
         this.loading = false;
-        console.error(error);
       }
     },
 
@@ -143,7 +151,6 @@ export const useAppStore = defineStore('app', {
       } catch (error: any) {
         this.error = error;
         this.loading = false;
-        console.error(error);
       }
     },
 
@@ -165,29 +172,24 @@ export const useAppStore = defineStore('app', {
       } catch (error: any) {
         this.error = error;
         this.loading = false;
-        console.error(error);
       }
     },
 
     async FETCH_USER() {
       try {
         this.loading = true;
-        this.token = getCookie(cookies_consts.jwt)
+        this.token = getCookie(cookies_consts.jwt);
         let { data } = await axios.get(BASE_URL + `/auth/profile`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
           },
         });
-        if (data.message == 'Unauthorized') {
-          this.LOGOUT();
-        } else {
-          this.user = data.user;
-          this.loading = false;
-        }
+        this.user = data.user;
+        this.loading = false;
       } catch (error: any) {
+        this.LOGOUT();
         this.error = error;
         this.loading = false;
-        console.error(error);
         return null;
       }
     },
@@ -203,7 +205,6 @@ export const useAppStore = defineStore('app', {
       } catch (error: any) {
         this.error = error;
         this.loading = false;
-        console.error(error);
       }
     },
 
@@ -220,18 +221,25 @@ export const useAppStore = defineStore('app', {
       } catch (error: any) {
         this.error = error;
         this.loading = false;
-        console.error(error);
       }
     },
 
     async LOGOUT() {
       this.loading = true;
       this.token = null;
-      let { data } = await axios.post(BASE_URL + `/users/logout`);
-      eraseCookie(cookies_consts.jwt);
-      this.user = null;
-      router.push('/login');
-      this.loading = false;
+      try{
+        let { data } = await axios.post(BASE_URL + `/users/logout`);
+      }
+      catch (error: any) {
+        this.error = error;
+        this.loading = false;
+      }
+      finally{
+        eraseCookie(cookies_consts.jwt);
+        this.user = null;
+        router.push('/login');
+        this.loading = false;
+      }
     },
   },
 });

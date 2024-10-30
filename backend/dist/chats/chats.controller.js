@@ -25,7 +25,7 @@ let ChatsController = class ChatsController {
 };
 exports.ChatsController = ChatsController;
 __decorate([
-    (0, common_1.Post)('getChats/:user_id'),
+    (0, common_1.Get)('getChats/:user_id'),
     __param(0, (0, common_1.Param)('user_id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),

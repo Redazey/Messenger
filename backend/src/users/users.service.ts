@@ -10,7 +10,7 @@ export class UsersService {
   ) {}
 
   async findOne(email: string): Promise<User | undefined> {
-    return this.users.findOne({
+    return await this.users.findOne({
       where: {
         email: email,
       },
@@ -18,7 +18,7 @@ export class UsersService {
   }
 
   async findByName(username: string): Promise<User[] | undefined> {
-    return this.users.findAll({
+    return await this.users.findAll({
       attributes: ['user_id', 'username'],
       where: {
         username: {
@@ -33,6 +33,6 @@ export class UsersService {
     email: string;
     password: string;
   }): Promise<User | undefined> {
-    return this.users.create(credentials);
+    return await this.users.create(credentials);
   }
 }

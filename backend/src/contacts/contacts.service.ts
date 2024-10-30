@@ -26,13 +26,13 @@ export class ContactsService {
   }
 
   async delete(credentials: { user_id: number; contact_id: number }) {
-    this.contacts.truncate({
+    await this.contacts.truncate({
       where: {
         user_id: credentials.user_id,
         contact_id: credentials.contact_id,
       },
     });
-    return this.contacts.truncate({
+    return await this.contacts.truncate({
       where: {
         user_id: credentials.contact_id,
         contact_id: credentials.user_id,
@@ -44,7 +44,7 @@ export class ContactsService {
     user_id: number;
     contact_id: number;
   }): Promise<Contact | undefined> {
-    const contact = this.contacts.findOne({
+    const contact = await this.contacts.findOne({
       where: {
         user_id: credentials.contact_id,
       },
@@ -56,11 +56,16 @@ export class ContactsService {
     user_id: number;
     contact_id: number;
   }): Promise<Contact | undefined> {
-    this.contacts.create({
+    const isExists = await this.isExists(credentials);
+    if (isExists != undefined) {
+      console.log(isExists);
+      return undefined;
+    }
+    await this.contacts.create({
       user_id: credentials.user_id,
       contact_id: credentials.contact_id,
     });
-    return this.contacts.create({
+    return await this.contacts.create({
       user_id: credentials.contact_id,
       contact_id: credentials.user_id,
     });

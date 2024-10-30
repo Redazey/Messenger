@@ -35,13 +35,13 @@ let ContactsService = class ContactsService {
         return contacts.map(contact => contact.get('contact'));
     }
     async delete(credentials) {
-        this.contacts.truncate({
+        await this.contacts.truncate({
             where: {
                 user_id: credentials.user_id,
                 contact_id: credentials.contact_id,
             },
         });
-        return this.contacts.truncate({
+        return await this.contacts.truncate({
             where: {
                 user_id: credentials.contact_id,
                 contact_id: credentials.user_id,
@@ -49,7 +49,7 @@ let ContactsService = class ContactsService {
         });
     }
     async isExists(credentials) {
-        const contact = this.contacts.findOne({
+        const contact = await this.contacts.findOne({
             where: {
                 user_id: credentials.contact_id,
             },
@@ -57,11 +57,16 @@ let ContactsService = class ContactsService {
         return contact;
     }
     async create(credentials) {
-        this.contacts.create({
+        const isExists = await this.isExists(credentials);
+        if (isExists != undefined) {
+            console.log(isExists);
+            return undefined;
+        }
+        await this.contacts.create({
             user_id: credentials.user_id,
             contact_id: credentials.contact_id,
         });
-        return this.contacts.create({
+        return await this.contacts.create({
             user_id: credentials.contact_id,
             contact_id: credentials.user_id,
         });

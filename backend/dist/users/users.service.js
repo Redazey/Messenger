@@ -20,14 +20,14 @@ let UsersService = class UsersService {
         this.users = users;
     }
     async findOne(email) {
-        return this.users.findOne({
+        return await this.users.findOne({
             where: {
                 email: email,
             },
         });
     }
     async findByName(username) {
-        return this.users.findAll({
+        return await this.users.findAll({
             attributes: ['user_id', 'username'],
             where: {
                 username: {
@@ -37,7 +37,7 @@ let UsersService = class UsersService {
         });
     }
     async create(credentials) {
-        return this.users.create(credentials);
+        return await this.users.create(credentials);
     }
 };
 exports.UsersService = UsersService;

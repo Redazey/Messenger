@@ -8,8 +8,8 @@ export interface Users {
 
 export interface Chats {
   chat_id: number;
-  chatName: string;
-  createdAt: string;
+  chat_name: string;
+  created_at: string | null;
 };
 
 export interface Contacts {
@@ -22,7 +22,7 @@ export interface Users_chats {
   id: number;
   chat_id: number;
   user_id: number;
-  entered_at: string;
+  entered_at: string | null;
 }
 
 export interface Messages {
@@ -31,7 +31,7 @@ export interface Messages {
   chat_id?: number;
   messageText: string;
   deleted: boolean;
-  sent_at: string;
+  sent_at: string | null;
   edit_at?: string;
 };
 
