@@ -187,6 +187,7 @@ export const useAppStore = defineStore('app', {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(BASE_URL + `/auth/login`, credentials);
+        await axiosInstance.get(BASE_URL + `/auth/login`)
         this.token = data.jwtToken;
         setCookie(cookies_consts.jwt, data.jwtToken, 14);
         router.push(this.returnUrl || '/');

@@ -8,8 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ContactList: typeof import('./components/ContactList.vue')['default']
-    ContactModal: typeof import('./components/ContactModal.vue')['default']
-    copy: typeof import('./components/LoginForm copy.vue')['default']
     HeaderNav: typeof import('./components/HeaderNav.vue')['default']
     LoginForm: typeof import('./components/LoginForm.vue')['default']
     MessageList: typeof import('./components/MessageList.vue')['default']

@@ -21,11 +21,14 @@ let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
-    signIn(signInDto) {
-        return this.authService.signIn({
+    async signIn(res, signInDto) {
+        const { jwtToken } = await this.authService.signIn({
             email: signInDto.email,
             password: signInDto.password,
         });
+        res.cookie('auth-token', jwtToken);
+        console.log(jwtToken);
+        res.send({ jwtToken });
     }
     register(createUserDto) {
         return this.authService.register(createUserDto);
@@ -38,10 +41,11 @@ exports.AuthController = AuthController;
 __decorate([
     (0, public_decorator_1.Public)(),
     (0, common_1.Post)('login'),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Res)({ passthrough: true })),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signIn", null);
 __decorate([
     (0, public_decorator_1.Public)(),
