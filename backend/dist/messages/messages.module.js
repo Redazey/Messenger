@@ -10,13 +10,20 @@ exports.MessagesModule = void 0;
 const common_1 = require("@nestjs/common");
 const messages_controller_1 = require("./messages.controller");
 const messages_service_1 = require("./messages.service");
+const messages_entity_1 = require("./messages.entity");
 let MessagesModule = class MessagesModule {
 };
 exports.MessagesModule = MessagesModule;
 exports.MessagesModule = MessagesModule = __decorate([
     (0, common_1.Module)({
         controllers: [messages_controller_1.MessagesController],
-        providers: [messages_service_1.MessagesService],
+        providers: [
+            messages_service_1.MessagesService,
+            {
+                provide: 'MESSAGES_REPOSITORY',
+                useValue: messages_entity_1.Message,
+            },
+        ],
     })
 ], MessagesModule);
 //# sourceMappingURL=messages.module.js.map

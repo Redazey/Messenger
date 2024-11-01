@@ -22,6 +22,9 @@ let UsersController = class UsersController {
     signIn(signInDto) {
         return this.userService.findByName(signInDto.username);
     }
+    getUsersByChat(chat_id) {
+        return this.userService.findByChat(chat_id);
+    }
     logout(res) {
         res.clearCookie('jwt-token');
         res.sendStatus(401);
@@ -35,6 +38,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "signIn", null);
+__decorate([
+    (0, common_1.Get)('inChat/:chat_id'),
+    __param(0, (0, common_1.Param)('chat_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getUsersByChat", null);
 __decorate([
     (0, common_1.Post)('logout'),
     __param(0, (0, common_1.Res)()),

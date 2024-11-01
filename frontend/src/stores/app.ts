@@ -34,6 +34,7 @@ export const useAppStore = defineStore('app', {
     users: ref<Users[]>([]),
     contacts: ref<Users[]>([]),
     messages: ref<Messages[]>([]),
+    message: ref<Messages>(),
     loading: ref(false),
     error: ref<string | null>(null),
   }),
@@ -43,6 +44,9 @@ export const useAppStore = defineStore('app', {
     },
     getMessages: (state) => {
       return state.messages;
+    },
+    getMessage: (state) => {
+      return state.message;
     },
     getUsers: (state) => {
       return state.users;
@@ -56,10 +60,10 @@ export const useAppStore = defineStore('app', {
   },
   actions: {
     // MESSAGES
-    async FETCH_MESSAGES(user_id: number) {
+    async FETCH_MESSAGES(chat_id: number) {
       try {
         this.loading = true;
-        let { data } = await axiosInstance.get(BASE_URL + `/users/${user_id}/messages`);
+        let { data } = await axiosInstance.get(BASE_URL + `/messages/get/${chat_id}`);
         this.messages = data;
         this.loading = false;
       } catch (error: any) {
@@ -69,16 +73,45 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    async CREATE_MESSAGE(
-      from_user_id: number,
-      to_chat_id: number,
-      message: string,
-    ) {
+    async CREATE_MESSAGE(message: Messages) {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(
-          BASE_URL + `/users/${from_user_id}/chats/${to_chat_id}/messages`,
+          BASE_URL + `/messages/send`,
           message,
+        );
+        this.message = data
+        this.messages.push(data)
+        this.loading = false;
+      } catch (error: any) {
+        this.error = error;
+        this.loading = false;
+        console.error(error);
+      }
+    },
+
+    async EDIT_MESSAGE(message_id: number) {
+      try {
+        this.loading = true;
+        let { data } = await axiosInstance.post(
+          BASE_URL + `/messages/edit`,
+          message_id,
+        );
+        this.message = data
+        this.loading = false;
+      } catch (error: any) {
+        this.error = error;
+        this.loading = false;
+        console.error(error);
+      }
+    },
+
+    async DELETE_MESSAGE(message_id: number) {
+      try {
+        this.loading = true;
+        let { data } = await axiosInstance.post(
+          BASE_URL + `/messages/delete`,
+          message_id,
         );
         this.loading = false;
       } catch (error: any) {
@@ -168,6 +201,17 @@ export const useAppStore = defineStore('app', {
       }
     },
 
+    async FETCH_USERS_BY_CHAT(chat_id: number) {
+      try {
+        this.loading = true;
+        let { data } = await axiosInstance.get(BASE_URL + `/users/inChat/${chat_id}`);
+        this.users = data
+      } catch (error: any) {
+        this.error = error;
+        this.loading = false;
+      }
+    },
+
     async FETCH_USER() {
       try {
         this.loading = true;
@@ -187,7 +231,6 @@ export const useAppStore = defineStore('app', {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(BASE_URL + `/auth/login`, credentials);
-        await axiosInstance.get(BASE_URL + `/auth/login`)
         this.token = data.jwtToken;
         setCookie(cookies_consts.jwt, data.jwtToken, 14);
         router.push(this.returnUrl || '/');

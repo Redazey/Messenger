@@ -15,9 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const sequelize_1 = require("sequelize");
+const users_chats_entity_1 = require("../users_chats/users_chats.entity");
 let UsersService = class UsersService {
-    constructor(users) {
+    constructor(users, user_chats) {
         this.users = users;
+        this.user_chats = user_chats;
     }
     async findOne(email) {
         return await this.users.findOne({
@@ -36,6 +38,17 @@ let UsersService = class UsersService {
             },
         });
     }
+    async findByChat(chat_id) {
+        return await this.users.findAll({
+            attributes: ['user_id', 'username'],
+            include: {
+                model: users_chats_entity_1.UsersChats,
+                where: {
+                    chat_id: chat_id,
+                },
+            },
+        });
+    }
     async create(credentials) {
         return await this.users.create(credentials);
     }
@@ -44,6 +57,7 @@ exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)('USERS_REPOSITORY')),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)('USERS_REPOSITORY')),
+    __metadata("design:paramtypes", [Object, Object])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

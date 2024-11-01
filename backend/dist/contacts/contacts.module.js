@@ -11,14 +11,13 @@ const common_1 = require("@nestjs/common");
 const contacts_service_1 = require("./contacts.service");
 const contacts_entity_1 = require("./contacts.entity");
 const contacts_controller_1 = require("./contacts.controller");
-const database_module_1 = require("../database/database.module");
 const chats_module_1 = require("../chats/chats.module");
 let ContactsModule = class ContactsModule {
 };
 exports.ContactsModule = ContactsModule;
 exports.ContactsModule = ContactsModule = __decorate([
     (0, common_1.Module)({
-        imports: [chats_module_1.ChatsModule, database_module_1.DatabaseModule],
+        imports: [chats_module_1.ChatsModule],
         providers: [
             contacts_service_1.ContactsService,
             {

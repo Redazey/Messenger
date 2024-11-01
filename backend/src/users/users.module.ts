@@ -1,10 +1,18 @@
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { userProviders } from './users.provider';
 import { UsersController } from './users.controller';
+import { User } from './users.entity';
+import { UsersChatsModule } from 'src/users_chats/users_chats.module';
 
 @Module({
-  providers: [UsersService, ...userProviders],
+  imports: [UsersChatsModule],
+  providers: [
+    UsersService,
+    {
+      provide: 'USERS_REPOSITORY',
+      useValue: User,
+    },
+  ],
   exports: [UsersService],
   controllers: [UsersController],
 })

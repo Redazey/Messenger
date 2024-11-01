@@ -26,12 +26,12 @@ export interface Users_chats {
 }
 
 export interface Messages {
-  messageId: number;
+  message_id?: number;
   user_id: number;
-  chat_id?: number;
-  messageText: string;
-  deleted: boolean;
-  sent_at: string | null;
+  chat_id: number;
+  message_text: string;
+  deleted?: boolean;
+  sent_at?: string;
   edit_at?: string;
 };
 

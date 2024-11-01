@@ -11,12 +11,13 @@ const common_1 = require("@nestjs/common");
 const auth_module_1 = require("./auth/auth.module");
 const database_module_1 = require("./database/database.module");
 const contacts_module_1 = require("./contacts/contacts.module");
+const messages_module_1 = require("./messages/messages.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [database_module_1.DatabaseModule, auth_module_1.AuthModule, contacts_module_1.ContactsModule],
+        imports: [database_module_1.DatabaseModule, auth_module_1.AuthModule, contacts_module_1.ContactsModule, messages_module_1.MessagesModule],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

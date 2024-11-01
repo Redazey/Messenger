@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Response } from 'express';
 
@@ -9,6 +9,11 @@ export class UsersController {
   @Post('find')
   signIn(@Body() signInDto: Record<string, any>) {
     return this.userService.findByName(signInDto.username);
+  }
+
+  @Get('inChat/:chat_id')
+  getUsersByChat(@Param('chat_id') chat_id: number) {
+    return this.userService.findByChat(chat_id);
   }
 
   @Post('logout')
