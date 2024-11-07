@@ -1,9 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Message } from './messages.entity';
 import { CreateMessageDto, EditMessageDto } from './messages.dto';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class MessagesService {
+  private messagesSubject = new Subject<Message[]>();
+  public messagesObservable = this.messagesSubject.asObservable();
+
   constructor(
     @Inject('MESSAGES_REPOSITORY')
     private messages: typeof Message
@@ -42,6 +46,8 @@ export class MessagesService {
     createMessageDto: CreateMessageDto
   ): Promise<Message | undefined> {
     createMessageDto.deleted = false;
-    return this.messages.create(createMessageDto);
+    const message = await this.messages.create(createMessageDto);
+    this.messagesSubject.next(await this.findAll(createMessageDto.chat_id));
+    return message;
   }
 }

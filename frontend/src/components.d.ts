@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ChatArea: typeof import('./components/ChatArea.vue')['default']
     ContactList: typeof import('./components/ContactList.vue')['default']
     HeaderNav: typeof import('./components/HeaderNav.vue')['default']
     LoginForm: typeof import('./components/LoginForm.vue')['default']

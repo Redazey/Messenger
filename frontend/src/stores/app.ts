@@ -73,6 +73,26 @@ export const useAppStore = defineStore('app', {
       }
     },
 
+    async REACTIVE_MESSAGES() {
+      const eventSource = new EventSource(BASE_URL + `/messages/getSSE`, {
+        withCredentials: true
+      });
+  
+      eventSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log(data)
+          this.messages.push(data);
+        } catch (err) {
+          console.error(err)
+        }
+      };
+  
+      eventSource.onerror = () => {
+        console.error("failed connect to the server")
+      };
+    },
+
     async CREATE_MESSAGE(message: Messages) {
       try {
         this.loading = true;

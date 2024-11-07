@@ -14,9 +14,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessagesService = void 0;
 const common_1 = require("@nestjs/common");
+const rxjs_1 = require("rxjs");
 let MessagesService = class MessagesService {
     constructor(messages) {
         this.messages = messages;
+        this.messagesSubject = new rxjs_1.Subject();
+        this.messagesObservable = this.messagesSubject.asObservable();
     }
     async findAll(chat_id) {
         return await this.messages.findAll({
@@ -43,7 +46,9 @@ let MessagesService = class MessagesService {
     }
     async create(createMessageDto) {
         createMessageDto.deleted = false;
-        return this.messages.create(createMessageDto);
+        const message = await this.messages.create(createMessageDto);
+        this.messagesSubject.next(await this.findAll(createMessageDto.chat_id));
+        return message;
     }
 };
 exports.MessagesService = MessagesService;

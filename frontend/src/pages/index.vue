@@ -1,9 +1,11 @@
 <template>
   <HeaderNav />
   <v-row>
-    <ContactList />
-    <v-col>
-      <MessageList />
+    <v-col cols="2">
+      <ContactList  />
+    </v-col>
+    <v-col cols="10">
+      <ChatArea />
       <MessageTextArea />
     </v-col>
   </v-row>

@@ -29,9 +29,12 @@ let AuthGuard = class AuthGuard {
             return true;
         }
         const request = context.switchToHttp().getRequest();
-        const token = this.extractTokenFromHeader(request);
+        let token = this.extractTokenFromHeader(request);
         if (!token) {
-            throw new common_1.UnauthorizedException();
+            token = this.extractTokenFromCookies(request);
+            if (!token) {
+                throw new common_1.UnauthorizedException();
+            }
         }
         try {
             const payload = await this.jwtService.verifyAsync(token, {
@@ -47,6 +50,10 @@ let AuthGuard = class AuthGuard {
     extractTokenFromHeader(request) {
         const [type, token] = request.headers.authorization?.split(' ') ?? [];
         return type === 'Bearer' ? token : undefined;
+    }
+    extractTokenFromCookies(request) {
+        const token = request.cookies['jwt-token'];
+        return token;
     }
 };
 exports.AuthGuard = AuthGuard;

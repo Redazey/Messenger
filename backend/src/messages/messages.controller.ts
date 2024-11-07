@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  MessageEvent,
+  Param,
+  Post,
+  Sse,
+} from '@nestjs/common';
 import { CreateMessageDto, EditMessageDto } from './messages.dto';
 import { MessagesService } from './messages.service';
+import { map, Observable } from 'rxjs';
 
 @Controller('messages')
 export class MessagesController {
@@ -22,7 +31,16 @@ export class MessagesController {
   }
 
   @Get('get/:chat_id')
-  getMessage(@Param('chat_id') chat_id: number) {
+  getMessages(@Param('chat_id') chat_id: number) {
     return this.messageService.findAll(chat_id);
+  }
+
+  @Sse('getSSE')
+  getSSEMessages(): Observable<MessageEvent> {
+    return this.messageService.messagesObservable.pipe(
+      map(message => ({
+        data: message,
+      }))
+    );
   }
 }

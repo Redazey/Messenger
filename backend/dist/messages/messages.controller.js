@@ -16,6 +16,7 @@ exports.MessagesController = void 0;
 const common_1 = require("@nestjs/common");
 const messages_dto_1 = require("./messages.dto");
 const messages_service_1 = require("./messages.service");
+const rxjs_1 = require("rxjs");
 let MessagesController = class MessagesController {
     constructor(messageService) {
         this.messageService = messageService;
@@ -29,8 +30,13 @@ let MessagesController = class MessagesController {
     deleteMessage(message_id) {
         return this.messageService.delete(message_id);
     }
-    getMessage(chat_id) {
+    getMessages(chat_id) {
         return this.messageService.findAll(chat_id);
+    }
+    getSSEMessages() {
+        return this.messageService.messagesObservable.pipe((0, rxjs_1.map)(message => ({
+            data: message,
+        })));
     }
 };
 exports.MessagesController = MessagesController;
@@ -61,7 +67,13 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
-], MessagesController.prototype, "getMessage", null);
+], MessagesController.prototype, "getMessages", null);
+__decorate([
+    (0, common_1.Sse)('getSSE'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", rxjs_1.Observable)
+], MessagesController.prototype, "getSSEMessages", null);
 exports.MessagesController = MessagesController = __decorate([
     (0, common_1.Controller)('messages'),
     __metadata("design:paramtypes", [messages_service_1.MessagesService])
