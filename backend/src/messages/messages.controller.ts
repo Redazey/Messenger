@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { CreateMessageDto, EditMessageDto } from './messages.dto';
 import { MessagesService } from './messages.service';
-import { map, Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Controller('messages')
 export class MessagesController {
@@ -35,12 +35,12 @@ export class MessagesController {
     return this.messageService.findAll(chat_id);
   }
 
-  @Sse('getSSE')
-  getSSEMessages(): Observable<MessageEvent> {
-    return this.messageService.messagesObservable.pipe(
-      map(message => ({
-        data: message,
-      }))
-    );
+  @Sse('getSSE/:chat_id')
+  getSSEMessages(@Param('chat_id') chat_id: number): Observable<MessageEvent> {
+    const subject = new Subject<MessageEvent>();
+
+    this.messageService.subscribeToChat(chat_id.toString(), subject);
+
+    return subject.asObservable();
   }
 }

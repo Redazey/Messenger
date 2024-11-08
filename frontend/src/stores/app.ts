@@ -73,8 +73,8 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    async REACTIVE_MESSAGES() {
-      const eventSource = new EventSource(BASE_URL + `/messages/getSSE`, {
+    async REACTIVE_MESSAGES(chat_id: number) {
+      const eventSource = new EventSource(BASE_URL + `/messages/getSSE/${chat_id}`, {
         withCredentials: true
       });
   

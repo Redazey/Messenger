@@ -33,10 +33,10 @@ let MessagesController = class MessagesController {
     getMessages(chat_id) {
         return this.messageService.findAll(chat_id);
     }
-    getSSEMessages() {
-        return this.messageService.messagesObservable.pipe((0, rxjs_1.map)(message => ({
-            data: message,
-        })));
+    getSSEMessages(chat_id) {
+        const subject = new rxjs_1.Subject();
+        this.messageService.subscribeToChat(chat_id.toString(), subject);
+        return subject.asObservable();
     }
 };
 exports.MessagesController = MessagesController;
@@ -69,9 +69,10 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], MessagesController.prototype, "getMessages", null);
 __decorate([
-    (0, common_1.Sse)('getSSE'),
+    (0, common_1.Sse)('getSSE/:chat_id'),
+    __param(0, (0, common_1.Param)('chat_id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", rxjs_1.Observable)
 ], MessagesController.prototype, "getSSEMessages", null);
 exports.MessagesController = MessagesController = __decorate([

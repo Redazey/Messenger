@@ -27,6 +27,7 @@ const chatMembers = ref<Users[]>([]);
 
 onMounted(() => {
   messagesStore.FETCH_MESSAGES(props.chat_id)
+  messagesStore.REACTIVE_MESSAGES(props.chat_id)
   messagesStore.FETCH_USERS_BY_CHAT(props.chat_id).then(() => {
     chatMembers.value = messagesStore.users;
   });

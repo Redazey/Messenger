@@ -9,5 +9,5 @@ export declare class MessagesController {
     editMessage(sendMessageDto: EditMessageDto): Promise<void>;
     deleteMessage(message_id: number): Promise<void>;
     getMessages(chat_id: number): Promise<import("./messages.entity").Message[]>;
-    getSSEMessages(): Observable<MessageEvent>;
+    getSSEMessages(chat_id: number): Observable<MessageEvent>;
 }

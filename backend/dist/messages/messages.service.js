@@ -14,12 +14,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessagesService = void 0;
 const common_1 = require("@nestjs/common");
-const rxjs_1 = require("rxjs");
+const events_1 = require("events");
 let MessagesService = class MessagesService {
     constructor(messages) {
         this.messages = messages;
-        this.messagesSubject = new rxjs_1.Subject();
-        this.messagesObservable = this.messagesSubject.asObservable();
+        this.ee = new events_1.EventEmitter();
+        this.chatSubscribers = {};
     }
     async findAll(chat_id) {
         return await this.messages.findAll({
@@ -44,10 +44,21 @@ let MessagesService = class MessagesService {
             },
         });
     }
+    subscribeToChat(chat_id, subscriber) {
+        if (!this.chatSubscribers[chat_id]) {
+            this.chatSubscribers[chat_id] = new Set();
+        }
+        this.chatSubscribers[chat_id].add(subscriber);
+        const handler = (messages) => {
+            subscriber.next(messages);
+        };
+        this.ee.on(chat_id, handler);
+    }
     async create(createMessageDto) {
         createMessageDto.deleted = false;
         const message = await this.messages.create(createMessageDto);
-        this.messagesSubject.next(await this.findAll(createMessageDto.chat_id));
+        const messages = await this.findAll(createMessageDto.chat_id);
+        this.ee.emit(createMessageDto.chat_id.toString(), messages);
         return message;
     }
 };

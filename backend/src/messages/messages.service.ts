@@ -2,11 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Message } from './messages.entity';
 import { CreateMessageDto, EditMessageDto } from './messages.dto';
 import { Subject } from 'rxjs';
+import { EventEmitter } from 'events';
 
 @Injectable()
 export class MessagesService {
-  private messagesSubject = new Subject<Message[]>();
-  public messagesObservable = this.messagesSubject.asObservable();
+  private ee = new EventEmitter();
+  private chatSubscribers: { [chat_id: number]: Subject<MessageEvent>[] } = {};
 
   constructor(
     @Inject('MESSAGES_REPOSITORY')
@@ -42,12 +43,27 @@ export class MessagesService {
     });
   }
 
+  subscribeToChat(chat_id: string, subscriber: any) {
+    if (!this.chatSubscribers[chat_id]) {
+      this.chatSubscribers[chat_id] = new Set();
+    }
+    this.chatSubscribers[chat_id].add(subscriber);
+
+    const handler = (messages: any) => {
+      subscriber.next(messages);
+    };
+
+    this.ee.on(chat_id, handler);
+  }
+
   async create(
     createMessageDto: CreateMessageDto
   ): Promise<Message | undefined> {
     createMessageDto.deleted = false;
     const message = await this.messages.create(createMessageDto);
-    this.messagesSubject.next(await this.findAll(createMessageDto.chat_id));
+    const messages = await this.findAll(createMessageDto.chat_id);
+
+    this.ee.emit(createMessageDto.chat_id.toString(), messages);
     return message;
   }
 }
