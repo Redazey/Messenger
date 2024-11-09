@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Chat } from './chats.entity';
 import { UsersChats } from '../users_chats/users_chats.entity';
+import { CreateChatDto } from './createChat.dto';
 
 @Injectable()
 export class ChatsService {
@@ -27,13 +28,10 @@ export class ChatsService {
     return userChats;
   }
 
-  async create(credentials: {
-    name: string;
-    user_id: number[];
-  }): Promise<Chat | undefined> {
-    const Chat = await this.chat.create({ chat_name: credentials.name });
+  async create(credentials: CreateChatDto): Promise<Chat | undefined> {
+    const Chat = await this.chat.create({ chat_name: credentials.chat_name });
 
-    credentials.user_id.forEach(id => {
+    credentials.participants.forEach(id => {
       this.users_chats.create({ chat_id: Chat.chat_id, user_id: id });
     });
 

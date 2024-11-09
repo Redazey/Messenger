@@ -17,16 +17,16 @@ export class ContactsController {
       contact_id: newContactDto.contact_id,
     });
     return this.chatsService.create({
-      name: newContactDto.chatname,
-      user_id: [newContactDto.user_id, newContactDto.contact_id],
+      chat_name: newContactDto.chatname,
+      participants: [newContactDto.user_id, newContactDto.contact_id],
     });
   }
 
   @Post('deleteContact')
   deleteContact(@Body() deleteContactDto: NewContactDto) {
     return this.chatsService.create({
-      name: deleteContactDto.chatname,
-      user_id: [deleteContactDto.user_id, deleteContactDto.contact_id],
+      chat_name: deleteContactDto.chatname,
+      participants: [deleteContactDto.user_id, deleteContactDto.contact_id],
     });
   }
 

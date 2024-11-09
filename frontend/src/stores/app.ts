@@ -21,7 +21,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 export const useAppStore = defineStore('app', {
@@ -56,14 +56,16 @@ export const useAppStore = defineStore('app', {
     },
     getChats: (state) => {
       return state.chats;
-    }
+    },
   },
   actions: {
     // MESSAGES
     async FETCH_MESSAGES(chat_id: number) {
       try {
         this.loading = true;
-        let { data } = await axiosInstance.get(BASE_URL + `/messages/get/${chat_id}`);
+        let { data } = await axiosInstance.get(
+          BASE_URL + `/messages/get/${chat_id}`,
+        );
         this.messages = data;
         this.loading = false;
       } catch (error: any) {
@@ -74,22 +76,25 @@ export const useAppStore = defineStore('app', {
     },
 
     async REACTIVE_MESSAGES(chat_id: number) {
-      const eventSource = new EventSource(BASE_URL + `/messages/getSSE/${chat_id}`, {
-        withCredentials: true
-      });
-  
+      const eventSource = new EventSource(
+        BASE_URL + `/messages/getSSE/${chat_id}`,
+        {
+          withCredentials: true,
+        },
+      );
+
       eventSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log(data)
+          console.log(data);
           this.messages.push(data);
         } catch (err) {
-          console.error(err)
+          console.error(err);
         }
       };
-  
+
       eventSource.onerror = () => {
-        console.error("failed connect to the server")
+        console.error('failed connect to the server');
       };
     },
 
@@ -100,8 +105,8 @@ export const useAppStore = defineStore('app', {
           BASE_URL + `/messages/send`,
           message,
         );
-        this.message = data
-        this.messages.push(data)
+        this.message = data;
+        this.messages.push(data);
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -117,7 +122,7 @@ export const useAppStore = defineStore('app', {
           BASE_URL + `/messages/edit`,
           message_id,
         );
-        this.message = data
+        this.message = data;
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -146,7 +151,8 @@ export const useAppStore = defineStore('app', {
       try {
         this.loading = true;
         let { data } = await axiosInstance.get(
-          BASE_URL + `/contacts/getContacts/${user_id}`);
+          BASE_URL + `/contacts/getContacts/${user_id}`,
+        );
         this.contacts = data;
         this.loading = false;
       } catch (error: any) {
@@ -164,7 +170,8 @@ export const useAppStore = defineStore('app', {
         this.loading = true;
         let { data } = await axiosInstance.post(
           BASE_URL + `/contacts/newContact`,
-          credentials);
+          credentials,
+        );
         this.contacts.push(data);
         this.loading = false;
       } catch (error: any) {
@@ -178,7 +185,8 @@ export const useAppStore = defineStore('app', {
       try {
         this.loading = true;
         let { data } = await axiosInstance.get(
-          BASE_URL + `/chats/getChats/${user_id}`);
+          BASE_URL + `/chats/getChats/${user_id}`,
+        );
         this.chats = data;
         this.loading = false;
       } catch (error: any) {
@@ -188,15 +196,16 @@ export const useAppStore = defineStore('app', {
     },
 
     async CREATE_CHAT(credentials: {
-      creator_id: number;
+      chat_name: string;
       participants: number[];
     }) {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(
-          BASE_URL + `/users/${credentials}/chats`,
+          BASE_URL + `/chats/create`,
           credentials,
         );
+        this.chats.push(data);
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -208,7 +217,10 @@ export const useAppStore = defineStore('app', {
     async FETCH_USERS(findBy: { username: string }) {
       try {
         this.loading = true;
-        let { data } = await axiosInstance.post(BASE_URL + `/users/find`, findBy);
+        let { data } = await axiosInstance.post(
+          BASE_URL + `/users/find`,
+          findBy,
+        );
         if (data.message == 'Unauthorized') {
           this.LOGOUT();
         } else {
@@ -224,8 +236,10 @@ export const useAppStore = defineStore('app', {
     async FETCH_USERS_BY_CHAT(chat_id: number) {
       try {
         this.loading = true;
-        let { data } = await axiosInstance.get(BASE_URL + `/users/inChat/${chat_id}`);
-        this.users = data
+        let { data } = await axiosInstance.get(
+          BASE_URL + `/users/inChat/${chat_id}`,
+        );
+        this.users = data;
       } catch (error: any) {
         this.error = error;
         this.loading = false;
@@ -250,7 +264,10 @@ export const useAppStore = defineStore('app', {
     async AUTH_USER(credentials: { email: string; password: string }) {
       try {
         this.loading = true;
-        let { data } = await axiosInstance.post(BASE_URL + `/auth/login`, credentials);
+        let { data } = await axiosInstance.post(
+          BASE_URL + `/auth/login`,
+          credentials,
+        );
         this.token = data.jwtToken;
         setCookie(cookies_consts.jwt, data.jwtToken, 14);
         router.push(this.returnUrl || '/');
@@ -280,14 +297,12 @@ export const useAppStore = defineStore('app', {
     async LOGOUT() {
       this.loading = true;
       this.token = null;
-      try{
+      try {
         let { data } = await axiosInstance.post(BASE_URL + `/users/logout`);
-      }
-      catch (error: any) {
+      } catch (error: any) {
         this.error = error;
         this.loading = false;
-      }
-      finally{
+      } finally {
         eraseCookie(cookies_consts.jwt);
         this.user = null;
         router.push('/login');
