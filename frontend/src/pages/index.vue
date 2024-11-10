@@ -6,7 +6,6 @@
     </v-col>
     <v-col cols="10">
       <ChatArea />
-      <MessageTextArea />
     </v-col>
   </v-row>
 </template>
