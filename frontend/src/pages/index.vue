@@ -1,6 +1,6 @@
 <template>
   <HeaderNav />
-  <v-row>
+  <v-row style="height: 80%;">
     <v-col cols="2">
       <ContactList  />
     </v-col>

@@ -1,10 +1,18 @@
 <template>
-  <v-list>
-    <v-list-item 
+  <v-list style="height: 100%;">
+    <v-list-item
       v-for="message in messages"
       :key="message.message_id"
       :subtitle="message.message_text"
       :title="getUserName(message.user_id)"
+      @contextmenu.prevent = "openMsgContextMenu($event, message)"
+    />
+    <context-menu
+      :visible="isContextMenuVisible"
+      :position="contextMenuPosition"
+      :message-text="selectedMessageText"
+      :message-id="selectedMessageId"
+      @close="isContextMenuVisible = false"
     />
   </v-list>
   <v-row class="pa-5">
@@ -18,7 +26,6 @@
       class="ma-2"
       auto-grow
     />
-
     <v-btn icon="mdi-send" size="large" class="ma-2" @click="sendMessage" />
   </v-row>
 </template>
@@ -28,22 +35,28 @@ import { useAppStore } from '@/stores/app';
 import { Users } from '@/types';
 import { ref, computed, onMounted } from 'vue';
 import { Messages } from '@/types';
+import ContextMenu from './ContextMenu.vue';
 
 const messagesStore = useAppStore();
 const messages = computed(() => messagesStore.messages);
 const chatMembers = ref<Users[]>([]);
 const text = ref('');
+
+const selectedMessageText = ref('');
+const selectedMessageId = ref(0);
+const isContextMenuVisible = ref(false);
+const contextMenuPosition = ref({ x: 0, y: 0 });
+
 const props = defineProps({
   chat_id: {
     type: Number,
     required: true,
   }
-})
-
+});
 
 onMounted(() => {
-  messagesStore.FETCH_MESSAGES(props.chat_id)
-  messagesStore.REACTIVE_MESSAGES(props.chat_id)
+  messagesStore.FETCH_MESSAGES(props.chat_id);
+  messagesStore.REACTIVE_MESSAGES(props.chat_id);
   messagesStore.FETCH_USERS_BY_CHAT(props.chat_id).then(() => {
     chatMembers.value = messagesStore.users;
   });
@@ -62,6 +75,13 @@ const sendMessage = async () => {
 
   await messagesStore.CREATE_MESSAGE(message);
   text.value = '';
+};
+
+const openMsgContextMenu = (event: MouseEvent, message: Messages) => {
+  selectedMessageText.value = message.message_text;
+  selectedMessageId.value = message.message_id as number;
+  isContextMenuVisible.value = true;
+  contextMenuPosition.value = { x: event.clientX, y: event.clientY };
 };
 
 const getUserName = (user_id: number) => {

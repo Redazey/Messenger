@@ -1,10 +1,10 @@
 <template>
-  <div v-if="isChatSelected">
+  <div style="height: 100%;" v-if="isChatSelected">
     <MessageList :key="chat_id" :chat_id="chat_id" />
   </div>
-  <div v-if="!isChatSelected">
+  <v-container v-if="!isChatSelected">
     <v-chip>Select a chat to start messaging</v-chip>
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts" setup>

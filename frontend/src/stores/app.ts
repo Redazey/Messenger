@@ -57,6 +57,9 @@ export const useAppStore = defineStore('app', {
     getChats: (state) => {
       return state.chats;
     },
+    getChat: (state) => {
+      return state.chat;
+    },
   },
   actions: {
     // MESSAGES
@@ -131,12 +134,12 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    async DELETE_MESSAGE(message_id: number) {
+    async DELETE_MESSAGE(credentials: {message_id: number}) {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(
           BASE_URL + `/messages/delete`,
-          message_id,
+          credentials,
         );
         this.loading = false;
       } catch (error: any) {

@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ChatArea: typeof import('./components/ChatArea.vue')['default']
     ContactList: typeof import('./components/ContactList.vue')['default']
+    ContextMenu: typeof import('./components/ContextMenu.vue')['default']
     HeaderNav: typeof import('./components/HeaderNav.vue')['default']
     LoginForm: typeof import('./components/LoginForm.vue')['default']
     MessageList: typeof import('./components/MessageList.vue')['default']
