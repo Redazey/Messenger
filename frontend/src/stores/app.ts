@@ -35,6 +35,7 @@ export const useAppStore = defineStore('app', {
     contacts: ref<Users[]>([]),
     messages: ref<Messages[]>([]),
     message: ref<Messages>(),
+    replyingMessage: ref<Messages>(),
     loading: ref(false),
     error: ref<string | null>(null),
   }),
@@ -108,8 +109,6 @@ export const useAppStore = defineStore('app', {
           BASE_URL + `/messages/send`,
           message,
         );
-        this.message = data;
-        this.messages.push(data);
         this.loading = false;
       } catch (error: any) {
         this.error = error;

@@ -142,7 +142,7 @@ onMounted(async () => {
 });
 
 const openSettingsDialog = async () => {
-  const user_id = userStorage.getUser?.user_id as number;
+  const user_id = user.value?.user_id as number;
 
   await userStorage.FETCH_CONTACTS(user_id);
   contacts.value = userStorage.getContacts;

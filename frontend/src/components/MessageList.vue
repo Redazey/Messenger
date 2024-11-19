@@ -1,17 +1,18 @@
 <template>
-  <v-list style="height: 100%;">
+  <v-list style="height: 100%">
     <v-list-item
       v-for="message in messages"
       :key="message.message_id"
       :subtitle="message.message_text"
       :title="getUserName(message.user_id)"
-      @contextmenu.prevent = "openMsgContextMenu($event, message)"
+      @contextmenu.prevent="openMsgContextMenu($event, message)"
     />
     <context-menu
       :visible="isContextMenuVisible"
       :position="contextMenuPosition"
-      :message-text="selectedMessageText"
-      :message-id="selectedMessageId"
+      :sender-name="getUserName(selectedMessage?.user_id as number)"
+      :message-text="selectedMessage?.message_text as string"
+      :message-id="selectedMessage?.message_id as number"
       @close="isContextMenuVisible = false"
     />
   </v-list>
@@ -42,8 +43,7 @@ const messages = computed(() => messagesStore.messages);
 const chatMembers = ref<Users[]>([]);
 const text = ref('');
 
-const selectedMessageText = ref('');
-const selectedMessageId = ref(0);
+const selectedMessage = ref<Messages>();
 const isContextMenuVisible = ref(false);
 const contextMenuPosition = ref({ x: 0, y: 0 });
 
@@ -51,7 +51,7 @@ const props = defineProps({
   chat_id: {
     type: Number,
     required: true,
-  }
+  },
 });
 
 onMounted(() => {
@@ -78,14 +78,13 @@ const sendMessage = async () => {
 };
 
 const openMsgContextMenu = (event: MouseEvent, message: Messages) => {
-  selectedMessageText.value = message.message_text;
-  selectedMessageId.value = message.message_id as number;
+  selectedMessage.value = message;
   isContextMenuVisible.value = true;
   contextMenuPosition.value = { x: event.clientX, y: event.clientY };
 };
 
 const getUserName = (user_id: number) => {
-  const user = chatMembers.value.find(user => user.user_id === user_id);
+  const user = chatMembers.value.find((user) => user.user_id === user_id);
   return user ? user.username : '';
 };
 </script>
