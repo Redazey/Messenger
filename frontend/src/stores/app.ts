@@ -86,19 +86,17 @@ export const useAppStore = defineStore('app', {
           withCredentials: true,
         },
       );
-
       eventSource.onmessage = (event) => {
         try {
-          const data = JSON.parse(event.data);
-          console.log(data);
-          this.messages.push(data);
+          const message = JSON.parse(event.data);
+          this.messages.push(message);
         } catch (err) {
           console.error(err);
         }
       };
-
-      eventSource.onerror = () => {
-        console.error('failed connect to the server');
+    
+      eventSource.onerror = (error) => {
+          console.error('Failed to connect to the server:', error);
       };
     },
 

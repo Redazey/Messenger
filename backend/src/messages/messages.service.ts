@@ -49,8 +49,8 @@ export class MessagesService {
     }
     this.chatSubscribers[chat_id].add(subscriber);
 
-    const handler = (messages: any) => {
-      subscriber.next(messages);
+    const handler = (message: Message) => {
+      subscriber.next(message);
     };
 
     this.ee.on(chat_id, handler);
@@ -61,9 +61,8 @@ export class MessagesService {
   ): Promise<Message | undefined> {
     createMessageDto.deleted = false;
     const message = await this.messages.create(createMessageDto);
-    const messages = await this.findAll(createMessageDto.chat_id);
 
-    this.ee.emit(createMessageDto.chat_id.toString(), messages);
+    this.ee.emit(createMessageDto.chat_id.toString(), JSON.stringify(message));
     return message;
   }
 }
