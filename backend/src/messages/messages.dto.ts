@@ -26,6 +26,11 @@ export class CreateMessageDto {
 }
 
 export class EditMessageDto {
+  @IsNumber()
+  @IsNotEmpty()
+  @Length(1, 100)
+  chat_id: number;
+
   @IsString()
   @IsNotEmpty()
   message_text: string;

@@ -16,7 +16,7 @@
       @close="isContextMenuVisible = false"
     />
   </v-list>
-  <v-row class="pa-5">
+  <v-row class="pa-5" v-if="!isEditing && !isReplying">
     <v-textarea
       max-rows="5"
       v-model="text"
@@ -29,6 +29,32 @@
     />
     <v-btn icon="mdi-send" size="large" class="ma-2" @click="sendMessage" />
   </v-row>
+  <v-row class="pa-5" v-if="isEditing && !isReplying">
+    <v-textarea
+      max-rows="5"
+      v-model="text"
+      variant="solo-filled"
+      label="Edit a message..."
+      row-height="15"
+      rows="1"
+      class="ma-2"
+      auto-grow
+    />
+    <v-btn icon="mdi-send" size="large" class="ma-2" @click="editMessage" />
+  </v-row>
+  <v-row class="pa-5" v-if="isReplying && !isEditing">
+    <v-textarea
+      max-rows="5"
+      v-model="text"
+      variant="solo-filled"
+      label="Reply a message..."
+      row-height="15"
+      rows="1"
+      class="ma-2"
+      auto-grow
+    />
+    <v-btn icon="mdi-send" size="large" class="ma-2" @click="editMessage" />
+  </v-row>
 </template>
 
 <script lang="ts" setup>
@@ -40,8 +66,10 @@ import ContextMenu from './ContextMenu.vue';
 
 const messagesStore = useAppStore();
 const messages = computed(() => messagesStore.messages);
+const isEditing = computed(() => messagesStore.message);
+const isReplying = computed(() => messagesStore.replyingMessage);
 const chatMembers = ref<Users[]>([]);
-const text = ref('');
+const text = ref(isEditing.value?.message_text as string);
 
 const selectedMessage = ref<Messages>();
 const isContextMenuVisible = ref(false);
@@ -75,6 +103,20 @@ const sendMessage = async () => {
 
   await messagesStore.CREATE_MESSAGE(message);
   text.value = '';
+};
+
+const editMessage = async () => {
+  if (text.value.trim() === '') {
+    return;
+  }
+
+  await messagesStore.EDIT_MESSAGE({
+    chat_id: isEditing.value?.chat_id as number,
+    message_text: text.value,
+    message_id: isEditing.value?.message_id as number,
+  });
+  text.value = '';
+  messagesStore.message = undefined
 };
 
 const openMsgContextMenu = (event: MouseEvent, message: Messages) => {

@@ -88,15 +88,29 @@ export const useAppStore = defineStore('app', {
       );
       eventSource.onmessage = (event) => {
         try {
-          const message = JSON.parse(event.data);
-          this.messages.push(message);
+          const data = JSON.parse(event.data)
+          switch (data.type) {
+            case "newMsg":
+              const newMsg = data.message;
+              this.messages.push(newMsg);
+              break;
+            case "editMsg":
+              const editMsg = data.message;
+              const index = this.messages.findIndex(msg => msg.message_id === editMsg.message_id);
+              if (index !== -1) {
+                this.messages[index].message_text = editMsg.message_text;
+              }
+              break;
+            default:
+              console.log(data.type)
+          }
         } catch (err) {
           console.error(err);
         }
       };
-    
+
       eventSource.onerror = (error) => {
-          console.error('Failed to connect to the server:', error);
+        console.error('Failed to connect to the server:', error);
       };
     },
 
@@ -115,14 +129,17 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    async EDIT_MESSAGE(message_id: number) {
+    async EDIT_MESSAGE(editMessageDto: {
+      chat_id: number,
+      message_text: string;
+      message_id: number;
+    }) {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(
           BASE_URL + `/messages/edit`,
-          message_id,
+          editMessageDto,
         );
-        this.message = data;
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -131,7 +148,7 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    async DELETE_MESSAGE(credentials: {message_id: number}) {
+    async DELETE_MESSAGE(credentials: { message_id: number }) {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(

@@ -18,6 +18,7 @@ export class MessagesService {
     return await this.messages.findAll({
       where: {
         chat_id: chat_id,
+        deleted: false,
       },
     });
   }
@@ -33,14 +34,27 @@ export class MessagesService {
         },
       }
     );
+
+    this.ee.emit(
+      editMessageDto.chat_id.toString(),
+      JSON.stringify({
+        message: editMessageDto,
+        type: 'editMsg',
+      })
+    );
   }
 
   async delete(message_id: number) {
-    await this.messages.destroy({
-      where: {
-        message_id: message_id,
+    await this.messages.update(
+      {
+        deleted: true,
       },
-    });
+      {
+        where: {
+          message_id: message_id,
+        },
+      }
+    );
   }
 
   subscribeToChat(chat_id: string, subscriber: any) {
@@ -62,7 +76,13 @@ export class MessagesService {
     createMessageDto.deleted = false;
     const message = await this.messages.create(createMessageDto);
 
-    this.ee.emit(createMessageDto.chat_id.toString(), JSON.stringify(message));
+    this.ee.emit(
+      createMessageDto.chat_id.toString(),
+      JSON.stringify({
+        message: message,
+        type: 'newMsg',
+      })
+    );
     return message;
   }
 }
