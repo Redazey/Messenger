@@ -86,7 +86,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'edit']);
 const dialog = ref(false);
 const messageStore = useAppStore();
 const chats = computed(() => messageStore.getChats);
@@ -132,6 +132,7 @@ const selectChat = (chat: Chats) => {
 
 const editMsg = () => {
   messageStore.message = messageStore.getMessages.find((element) => element.message_id === props.messageId);
+  emit('edit', messageStore.message?.message_text);
   emit('close');
 };
 

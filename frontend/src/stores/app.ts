@@ -285,9 +285,11 @@ export const useAppStore = defineStore('app', {
           BASE_URL + `/auth/login`,
           credentials,
         );
+        
         this.token = data.jwtToken;
         setCookie(cookies_consts.jwt, data.jwtToken, 14);
         router.push(this.returnUrl || '/');
+
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -295,17 +297,25 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    async REG_USER(credentials: { email: string; password: string }) {
+    async REG_USER(credentials: { username: string; email: string; password: string }) {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(
           BASE_URL + `/auth/register`,
           credentials,
         );
+        
         this.token = data.jwtToken;
         setCookie(cookies_consts.jwt, data.jwtToken, 14);
+        router.push(this.returnUrl || '/');
+
         this.loading = false;
       } catch (error: any) {
+        if (error.status == 409) {
+          alert('Пользователь с таким e-mail уже существует')
+          this.loading = false;
+          return
+        }
         this.error = error;
         this.loading = false;
       }

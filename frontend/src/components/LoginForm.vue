@@ -1,19 +1,17 @@
 <template>
   <v-card class="mx-auto" style="max-width: 500px">
-    <v-toolbar color="deep-purple-accent-4" cards dark flat>
-      <v-card-title class="text-h6 font-weight-regular"> Sign up </v-card-title>
+    <v-toolbar cards dark flat>
+      <v-card-title class="text-h6 font-weight-regular"> Areal-Messenger </v-card-title>
       <v-spacer></v-spacer>
     </v-toolbar>
     <v-form ref="form" v-model="isValid" class="pa-5 pt-5">
       <v-text-field
         v-model="email"
-        color="deep-purple"
         label="Email"
         variant="filled"
       ></v-text-field>
       <v-text-field
         v-model="password"
-        color="deep-purple"
         label="Password"
         type="password"
         variant="filled"
@@ -24,49 +22,40 @@
       <v-spacer></v-spacer>
       <v-btn
         :loading="isLoading"
-        color="deep-purple-accent-4"
         link
         to="register"
       >
-        Register
+        Нет аккаунта?
       </v-btn>
       /
-      <v-btn :loading="isLoading" color="deep-purple-accent-4" @click="signIn"> Sign up </v-btn>
+      <v-btn :loading="isLoading" @click="signIn"> Войти </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { useAppStore } from '@/stores/app';
 
-export default {
-  data: () => ({
-    isLoading: false,
-    email: '',
-    password: '',
-    isValid: false,
-  }),
-  setup() {
-    const auth = useAppStore();
-    return { auth };
-  },
-  methods: {
-    async signIn() {
-      if (!this.email || !this.password) {
-        alert('Username and password are required.');
-        return;
-      }
+const auth = useAppStore();
+const isLoading = ref(false);
+const email = ref('');
+const password = ref('');
+const isValid = ref(false);
 
-      this.isLoading = true;
+const signIn = async () => {
+  if (!email.value || !password.value) {
+    alert('Username and password are required.');
+    return;
+  }
 
-      try {
-        await this.auth.AUTH_USER({ email: this.email, password: this.password });
-      } catch (error) {
-        console.error('Registration failed:', error);
-      } finally {
-        this.isLoading = false;
-      }
-    },
-  },
+  isLoading.value = true;
+
+  try {
+    await auth.AUTH_USER({ email: email.value, password: password.value });
+  } catch (error) {
+    console.error('Registration failed:', error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>

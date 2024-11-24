@@ -1,9 +1,9 @@
 <template>
-  <v-toolbar color="cyan-lighten-1" height="10%">
+  <v-toolbar height="10%">
     <v-btn icon="mdi-menu" variant="text" @click="drawer = !drawer" />
 
     <v-label
-      class="ma-5"
+      class="ma-5 mx-auto"
       text="Chat-1"
       style="color: white; font-size: larger; font-weight: bolder"
     />

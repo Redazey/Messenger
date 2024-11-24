@@ -3,10 +3,23 @@
     <v-list-item
       v-for="message in messages"
       :key="message.message_id"
-      :subtitle="message.message_text"
-      :title="getUserName(message.user_id)"
+      class="message-item"
+      :class="{ 'message-right': message.user_id == messagesStore.getUser?.user_id }"
       @contextmenu.prevent="openMsgContextMenu($event, message)"
-    />
+    >
+      <v-chip
+        :class="{
+          'current-user-chip': message.user_id == messagesStore.getUser?.user_id,
+        }"
+        class="message-chip"
+      >
+        <div>
+          <strong>{{ getUserName(message.user_id) }}</strong>
+        </div>
+        <div>{{ message.message_text }}</div>
+      </v-chip>
+    </v-list-item>
+
     <context-menu
       :visible="isContextMenuVisible"
       :position="contextMenuPosition"
@@ -14,6 +27,11 @@
       :message-text="selectedMessage?.message_text as string"
       :message-id="selectedMessage?.message_id as number"
       @close="isContextMenuVisible = false"
+      @edit="
+        (message_text) => {
+          text = message_text;
+        }
+      "
     />
   </v-list>
   <v-row class="pa-5" v-if="!isEditing && !isReplying">
@@ -69,7 +87,7 @@ const messages = computed(() => messagesStore.messages);
 const isEditing = computed(() => messagesStore.message);
 const isReplying = computed(() => messagesStore.replyingMessage);
 const chatMembers = ref<Users[]>([]);
-const text = ref(isEditing.value?.message_text as string);
+const text = ref('');
 
 const selectedMessage = ref<Messages>();
 const isContextMenuVisible = ref(false);
@@ -116,7 +134,7 @@ const editMessage = async () => {
     message_id: isEditing.value?.message_id as number,
   });
   text.value = '';
-  messagesStore.message = undefined
+  messagesStore.message = undefined;
 };
 
 const openMsgContextMenu = (event: MouseEvent, message: Messages) => {
@@ -130,3 +148,24 @@ const getUserName = (user_id: number) => {
   return user ? user.username : '';
 };
 </script>
+
+<style scoped>
+.message-item {
+  display: flex;
+  justify-content: flex-start;
+  height: fit-content;
+}
+
+.message-right {
+  justify-content: flex-end;
+}
+
+.message-chip {
+  word-wrap: break-word;
+}
+
+.current-user-chip {
+  background-color: #e0f7fa;
+  color: #00695c;
+}
+</style>
