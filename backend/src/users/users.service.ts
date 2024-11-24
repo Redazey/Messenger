@@ -20,12 +20,18 @@ export class UsersService {
     });
   }
 
-  async findByName(username: string): Promise<User[] | undefined> {
+  async findByName(
+    username: string,
+    user_id: number
+  ): Promise<User[] | undefined> {
     return await this.users.findAll({
       attributes: ['user_id', 'username'],
       where: {
         username: {
           [Op.iLike]: `%${username}%`,
+        },
+        user_id: {
+          [Op.ne]: user_id,
         },
       },
     });

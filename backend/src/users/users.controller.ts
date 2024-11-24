@@ -8,7 +8,7 @@ export class UsersController {
 
   @Post('find')
   signIn(@Body() signInDto: Record<string, any>) {
-    return this.userService.findByName(signInDto.username);
+    return this.userService.findByName(signInDto.username, signInDto.user_id);
   }
 
   @Get('inChat/:chat_id')

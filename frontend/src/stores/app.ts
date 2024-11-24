@@ -231,7 +231,7 @@ export const useAppStore = defineStore('app', {
     },
 
     // AUTH
-    async FETCH_USERS(findBy: { username: string }) {
+    async FETCH_USERS(findBy: { username: string, user_id: number }) {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(
@@ -285,7 +285,7 @@ export const useAppStore = defineStore('app', {
           BASE_URL + `/auth/login`,
           credentials,
         );
-        
+
         this.token = data.jwtToken;
         setCookie(cookies_consts.jwt, data.jwtToken, 14);
         router.push(this.returnUrl || '/');

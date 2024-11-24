@@ -1,10 +1,10 @@
 <template>
   <v-toolbar height="10%">
-    <v-btn icon="mdi-menu" variant="text" @click="drawer = !drawer" />
+    <v-btn icon="mdi-menu" class="my-2" variant="text" @click="drawer = !drawer" />
 
     <v-label
-      class="ma-5 mx-auto"
-      text="Chat-1"
+      class="mx-auto"
+      :text="chat?.chat_name"
       style="color: white; font-size: larger; font-weight: bolder"
     />
   </v-toolbar>
@@ -136,6 +136,7 @@ const selectedContacts = ref<number[]>([]);
 
 const userStorage = useAppStore();
 const user = computed(() => userStorage.user);
+const chat = computed(() => userStorage.chat);
 
 onMounted(async () => {
   await userStorage.FETCH_USER();

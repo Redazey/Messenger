@@ -1,6 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { Contact } from './contacts.entity';
 import { User } from 'src/users/users.entity';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class ContactsService {
@@ -18,6 +19,9 @@ export class ContactsService {
           attributes: ['username', 'user_id'],
           as: 'contact',
           required: true,
+          where: {
+            user_id: { [Op.ne]: user_id },
+          },
         },
       ],
     });
@@ -58,9 +62,13 @@ export class ContactsService {
   }): Promise<Contact | undefined> {
     const isExists = await this.isExists(credentials);
     if (isExists != undefined) {
-      console.log(isExists);
       return undefined;
     }
+
+    if (credentials.user_id == credentials.contact_id) {
+      throw new ConflictException('You cant yourself to contacts');
+    }
+
     await this.contacts.create({
       user_id: credentials.user_id,
       contact_id: credentials.contact_id,

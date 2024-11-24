@@ -4,12 +4,15 @@
       v-for="message in messages"
       :key="message.message_id"
       class="message-item"
-      :class="{ 'message-right': message.user_id == messagesStore.getUser?.user_id }"
+      :class="{
+        'message-right': message.user_id == messagesStore.getUser?.user_id,
+      }"
       @contextmenu.prevent="openMsgContextMenu($event, message)"
     >
       <v-chip
         :class="{
-          'current-user-chip': message.user_id == messagesStore.getUser?.user_id,
+          'current-user-chip':
+            message.user_id == messagesStore.getUser?.user_id,
         }"
         class="message-chip"
       >
@@ -34,44 +37,23 @@
       "
     />
   </v-list>
-  <v-row class="pa-5" v-if="!isEditing && !isReplying">
+  <v-row class="pa-5" v-if="!isReplying">
     <v-textarea
       max-rows="5"
       v-model="text"
       variant="solo-filled"
-      label="Write a message..."
+      :label="isEditing ? 'Edit a message...' : 'Write a message...'"
       row-height="15"
       rows="1"
       class="ma-2"
       auto-grow
     />
-    <v-btn icon="mdi-send" size="large" class="ma-2" @click="sendMessage" />
-  </v-row>
-  <v-row class="pa-5" v-if="isEditing && !isReplying">
-    <v-textarea
-      max-rows="5"
-      v-model="text"
-      variant="solo-filled"
-      label="Edit a message..."
-      row-height="15"
-      rows="1"
+    <v-btn
+      icon="mdi-send"
+      size="large"
       class="ma-2"
-      auto-grow
+      @click="isEditing ? editMessage() : sendMessage()"
     />
-    <v-btn icon="mdi-send" size="large" class="ma-2" @click="editMessage" />
-  </v-row>
-  <v-row class="pa-5" v-if="isReplying && !isEditing">
-    <v-textarea
-      max-rows="5"
-      v-model="text"
-      variant="solo-filled"
-      label="Reply a message..."
-      row-height="15"
-      rows="1"
-      class="ma-2"
-      auto-grow
-    />
-    <v-btn icon="mdi-send" size="large" class="ma-2" @click="editMessage" />
   </v-row>
 </template>
 

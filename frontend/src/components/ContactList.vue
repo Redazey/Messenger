@@ -112,7 +112,7 @@ const find = async () => {
   isLoading.value = true;
 
   try {
-    await userStorage.FETCH_USERS({ username: username.value });
+    await userStorage.FETCH_USERS({ username: username.value, user_id: userStorage.getUser?.user_id as number });
   } catch (error) {
     console.error('Search failed:', error);
   } finally {
