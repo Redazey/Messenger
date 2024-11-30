@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%;" v-if="isChatSelected">
+  <div style="height: 80%" v-if="isChatSelected">
     <MessageList :key="chat_id" :chat_id="chat_id" />
   </div>
   <v-container v-if="!isChatSelected" class="text-center">

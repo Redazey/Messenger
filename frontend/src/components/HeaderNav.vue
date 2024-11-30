@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar height="10%">
+  <v-toolbar>
     <v-btn icon="mdi-menu" class="my-2" variant="text" @click="drawer = !drawer" />
 
     <v-label
@@ -19,23 +19,10 @@
     <v-divider />
 
     <v-list style="display: flex; flex-direction: column">
-      <v-list-item title="Settings">
-        <template v-slot:prepend>
-          <v-icon>mdi-cog</v-icon>
-        </template>
-      </v-list-item>
-
       <v-list-item @click="openSettingsDialog()" title="Create chat">
         <template v-slot:prepend>
           <v-icon>mdi-message-plus</v-icon>
         </template>
-      </v-list-item>
-
-      <v-list-item align-content-center align-center>
-        <template v-slot:prepend>
-          <v-icon>mdi-weather-night</v-icon>
-        </template>
-        <v-switch inset></v-switch>
       </v-list-item>
     </v-list>
 

@@ -1,7 +1,7 @@
 <template>
-  <v-list style="height: 100%">
+  <v-list style="height: 100%;">
     <v-list-item
-      v-for="message in messages"
+      v-for="message, index in messages"
       :key="message.message_id"
       class="message-item"
       :class="{
@@ -9,18 +9,19 @@
       }"
       @contextmenu.prevent="openMsgContextMenu($event, message)"
     >
-      <v-chip
-        :class="{
-          'current-user-chip':
-            message.user_id == messagesStore.getUser?.user_id,
-        }"
+      <template v-if="shouldDisplaySenderName(index, message.user_id)">
+        <strong>{{ getUserName(message.user_id) }}</strong><br>
+      </template>
+      
+      <div
         class="message-chip"
+        :class="
+          message.user_id == messagesStore.getUser?.user_id ? 
+            'bg-surface-light': 'bg-surface-bright'
+        "
       >
-        <div>
-          <strong>{{ getUserName(message.user_id) }}</strong>
-        </div>
         <div>{{ message.message_text }}</div>
-      </v-chip>
+      </div>
     </v-list-item>
 
     <context-menu
@@ -39,7 +40,7 @@
   </v-list>
   <v-row class="pa-5" v-if="!isReplying">
     <v-textarea
-      max-rows="5"
+      max-rows="4"
       v-model="text"
       variant="solo-filled"
       :label="isEditing ? 'Edit a message...' : 'Write a message...'"
@@ -129,6 +130,15 @@ const getUserName = (user_id: number) => {
   const user = chatMembers.value.find((user) => user.user_id === user_id);
   return user ? user.username : '';
 };
+
+const shouldDisplaySenderName = (index: number, userId: number) => {
+  if (index === 0) {
+    return true;
+  }
+
+  const previousMessage = messages.value[index - 1];
+  return previousMessage.user_id !== userId;
+};
 </script>
 
 <style scoped>
@@ -140,14 +150,13 @@ const getUserName = (user_id: number) => {
 
 .message-right {
   justify-content: flex-end;
+  text-align: right;
 }
 
 .message-chip {
   word-wrap: break-word;
-}
-
-.current-user-chip {
-  background-color: #e0f7fa;
-  color: #00695c;
+  overflow-wrap: break-word;
+  padding: 5px;
+  border-radius: 5px;
 }
 </style>

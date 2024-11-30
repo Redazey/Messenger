@@ -8,20 +8,18 @@
     hide-details
     single-line
     class="ma-2"
-    max-width="12%"
-    min-width="150px"
     @input="find"
   />
-  <div style="height: 75%;">
+  <div>
     <div v-if="username !== ''">
-      <v-list>
+      <v-list class="bg-background">
         <v-list-item
           v-for="user in filteredUsers"
           :key="user.user_id"
           :value="user.username"
           :title="user.username"
           @click="openUserDialog(user)"
-          class="cursor-poiner"
+          class="cursor-poiner bg-background"
         />
         <v-list-item v-if="isLoading" titile="Loading..." />
       </v-list>
@@ -63,13 +61,13 @@
       </v-dialog>
     </div>
     <div v-if="!username">
-      <v-list>
+      <v-list class="bg-background">
         <v-list-item
           v-for="chat in userChats"
           :key="chat.chat_id"
           :title="chat.chat_name"
           @click="selectUserChat(chat)"
-          class="cursor-poiner"
+          class="cursor-poiner bg-background"
         />
         <v-list-item v-if="isLoading" titile="Loading..." />
       </v-list>
