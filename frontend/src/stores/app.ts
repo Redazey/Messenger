@@ -131,6 +131,7 @@ export const useAppStore = defineStore('app', {
 
     async EDIT_MESSAGE(editMessageDto: {
       chat_id: number,
+      sender_id: number,
       message_text: string;
       message_id: number;
     }) {

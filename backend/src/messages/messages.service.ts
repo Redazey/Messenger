@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { Message } from './messages.entity';
 import { CreateMessageDto, EditMessageDto } from './messages.dto';
 import { Subject } from 'rxjs';
@@ -24,24 +24,29 @@ export class MessagesService {
   }
 
   async edit(editMessageDto: EditMessageDto) {
-    await this.messages.update(
-      {
-        message_text: editMessageDto.message_text,
-      },
-      {
-        where: {
-          message_id: editMessageDto.message_id,
+    if (editMessageDto.sender_id == editMessageDto.user_id) {
+      console.log(editMessageDto);
+      await this.messages.update(
+        {
+          message_text: editMessageDto.message_text,
         },
-      }
-    );
+        {
+          where: {
+            message_id: editMessageDto.message_id,
+          },
+        }
+      );
 
-    this.ee.emit(
-      editMessageDto.chat_id.toString(),
-      JSON.stringify({
-        message: editMessageDto,
-        type: 'editMsg',
-      })
-    );
+      this.ee.emit(
+        editMessageDto.chat_id.toString(),
+        JSON.stringify({
+          message: editMessageDto,
+          type: 'editMsg',
+        })
+      );
+    } else {
+      return ForbiddenException;
+    }
   }
 
   async delete(message_id: number) {

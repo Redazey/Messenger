@@ -28,6 +28,7 @@
       :visible="isContextMenuVisible"
       :position="contextMenuPosition"
       :sender-name="getUserName(selectedMessage?.user_id as number)"
+      :have-access="selectedMessage?.user_id == messagesStore.getUser?.user_id"
       :message-text="selectedMessage?.message_text as string"
       :message-id="selectedMessage?.message_id as number"
       @close="isContextMenuVisible = false"
@@ -113,6 +114,7 @@ const editMessage = async () => {
 
   await messagesStore.EDIT_MESSAGE({
     chat_id: isEditing.value?.chat_id as number,
+    sender_id: isEditing.value?.user_id as number,
     message_text: text.value,
     message_id: isEditing.value?.message_id as number,
   });

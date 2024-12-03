@@ -10,6 +10,7 @@ import {
 import { CreateMessageDto, EditMessageDto } from './messages.dto';
 import { MessagesService } from './messages.service';
 import { Observable, Subject } from 'rxjs';
+import { GetUser } from 'src/common/decorators/getUser.decorator';
 
 @Controller('messages')
 export class MessagesController {
@@ -21,7 +22,8 @@ export class MessagesController {
   }
 
   @Post('edit')
-  editMessage(@Body() sendMessageDto: EditMessageDto) {
+  editMessage(@Body() sendMessageDto: EditMessageDto, @GetUser() user: any) {
+    sendMessageDto.user_id = user.sub;
     return this.messageService.edit(sendMessageDto);
   }
 

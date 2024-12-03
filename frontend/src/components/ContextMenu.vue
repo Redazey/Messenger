@@ -8,8 +8,8 @@
       <v-list-item @click="copyMsg">Копировать</v-list-item>
       <v-list-item @click="replyMsg">Ответить</v-list-item>
       <v-list-item @click="forwardMsg">Переслать</v-list-item>
-      <v-list-item @click="editMsg">Редактировать</v-list-item>
-      <v-list-item @click="deleteMsg">Удалить</v-list-item>
+      <v-list-item v-if="haveAccess" @click="editMsg">Редактировать</v-list-item>
+      <v-list-item v-if="haveAccess" @click="deleteMsg">Удалить</v-list-item>
 
       <v-dialog v-model="dialog" max-width="500">
         <v-card rounded="lg">
@@ -66,6 +66,10 @@ import { defineProps } from 'vue';
 const props = defineProps({
   senderName: {
     type: String,
+    required: true,
+  },
+  haveAccess: {
+    type: Boolean,
     required: true,
   },
   messageText: {
