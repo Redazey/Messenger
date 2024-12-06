@@ -49,7 +49,14 @@ export class MessagesService {
     }
   }
 
-  async delete(message_id: number) {
+  async delete(chat_id: number, message_id: number) {
+    this.ee.emit(
+      chat_id.toString(),
+      JSON.stringify({
+        message: message_id,
+        type: 'deleteMsg',
+      })
+    );
     await this.messages.update(
       {
         deleted: true,
@@ -66,6 +73,11 @@ export class MessagesService {
     if (!this.chatSubscribers[chat_id]) {
       this.chatSubscribers[chat_id] = new Set();
     }
+
+    while (this.chatSubscribers[chat_id].has(subscriber)) {
+      this.chatSubscribers[chat_id].delete(subscriber);
+    }
+
     this.chatSubscribers[chat_id].add(subscriber);
 
     const handler = (message: Message) => {

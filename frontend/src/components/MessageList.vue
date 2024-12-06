@@ -1,7 +1,7 @@
 <template>
-  <v-list style="height: 100%;">
+  <v-list>
     <v-list-item
-      v-for="message, index in messages"
+      v-for="(message, index) in messages"
       :key="message.message_id"
       class="message-item"
       :class="{
@@ -10,14 +10,16 @@
       @contextmenu.prevent="openMsgContextMenu($event, message)"
     >
       <template v-if="shouldDisplaySenderName(index, message.user_id)">
-        <strong>{{ getUserName(message.user_id) }}</strong><br>
+        <strong>{{ getUserName(message.user_id) }}</strong
+        ><br />
       </template>
-      
+
       <div
         class="message-chip"
         :class="
-          message.user_id == messagesStore.getUser?.user_id ? 
-            'bg-surface-light': 'bg-surface-bright'
+          message.user_id == messagesStore.getUser?.user_id
+            ? 'bg-surface-light'
+            : 'bg-surface-bright'
         "
       >
         <div>{{ message.message_text }}</div>
@@ -67,7 +69,9 @@ import { Messages } from '@/types';
 import ContextMenu from './ContextMenu.vue';
 
 const messagesStore = useAppStore();
-const messages = computed(() => messagesStore.messages);
+const messages = computed(
+  () => messagesStore.messages[messagesStore.getChat?.chat_id as number],
+);
 const isEditing = computed(() => messagesStore.message);
 const isReplying = computed(() => messagesStore.replyingMessage);
 const chatMembers = ref<Users[]>([]);
@@ -86,7 +90,6 @@ const props = defineProps({
 
 onMounted(() => {
   messagesStore.FETCH_MESSAGES(props.chat_id);
-  messagesStore.REACTIVE_MESSAGES(props.chat_id);
   messagesStore.FETCH_USERS_BY_CHAT(props.chat_id).then(() => {
     chatMembers.value = messagesStore.users;
   });

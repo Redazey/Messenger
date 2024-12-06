@@ -33,34 +33,22 @@ export const useAppStore = defineStore('app', {
     returnUrl: ref<string | null>(),
     users: ref<Users[]>([]),
     contacts: ref<Users[]>([]),
-    messages: ref<Messages[]>([]),
+    messages: ref<{ [key: number]: Messages[] }>([]),
     message: ref<Messages>(),
     replyingMessage: ref<Messages>(),
     loading: ref(false),
+    eventsources: ref<EventSource[]>([]),
     error: ref<string | null>(null),
   }),
   getters: {
-    getContacts: (state) => {
-      return state.contacts;
-    },
-    getMessages: (state) => {
-      return state.messages;
-    },
-    getMessage: (state) => {
-      return state.message;
-    },
-    getUsers: (state) => {
-      return state.users;
-    },
-    getUser: (state) => {
-      return state.user;
-    },
-    getChats: (state) => {
-      return state.chats;
-    },
-    getChat: (state) => {
-      return state.chat;
-    },
+    getContacts: (state) => state.contacts,
+    getMessages: (state) => state.messages,
+    getMessage: (state) => state.message,
+    getUsers: (state) => state.users,
+    getUser: (state) => state.user,
+    getChats: (state) => state.chats,
+    getChat: (state) => state.chat,
+    getEventsources: (state) => state.eventsources,
   },
   actions: {
     // MESSAGES
@@ -70,7 +58,7 @@ export const useAppStore = defineStore('app', {
         let { data } = await axiosInstance.get(
           BASE_URL + `/messages/get/${chat_id}`,
         );
-        this.messages = data;
+        this.messages[chat_id] = data;
         this.loading = false;
       } catch (error: any) {
         this.error = error;
@@ -86,23 +74,39 @@ export const useAppStore = defineStore('app', {
           withCredentials: true,
         },
       );
+
       eventSource.onmessage = (event) => {
         try {
-          const data = JSON.parse(event.data)
+          const data = JSON.parse(event.data);
           switch (data.type) {
-            case "newMsg":
+            case 'newMsg':
               const newMsg = data.message;
-              this.messages.push(newMsg);
+              this.messages[chat_id].push(newMsg);
+
               break;
-            case "editMsg":
-              const editMsg = data.message;
-              const index = this.messages.findIndex(msg => msg.message_id === editMsg.message_id);
-              if (index !== -1) {
-                this.messages[index].message_text = editMsg.message_text;
+            case 'deleteMsg':
+              const deletedMsg = data.message;
+              const msg = this.messages[chat_id].findIndex(
+                (msg) => msg.message_id === deletedMsg,
+              );
+
+              if (msg !== -1) {
+                delete this.messages[chat_id][msg];
               }
+
               break;
-            default:
-              console.log(data.type)
+            case 'editMsg':
+              const editMsg = data.message;
+              const index = this.messages[chat_id].findIndex(
+                (msg) => msg.message_id === editMsg.message_id,
+              );
+
+              if (index !== -1) {
+                this.messages[chat_id][index].message_text =
+                  editMsg.message_text;
+              }
+
+              break;
           }
         } catch (err) {
           console.error(err);
@@ -130,8 +134,8 @@ export const useAppStore = defineStore('app', {
     },
 
     async EDIT_MESSAGE(editMessageDto: {
-      chat_id: number,
-      sender_id: number,
+      chat_id: number;
+      sender_id: number;
       message_text: string;
       message_id: number;
     }) {
@@ -149,7 +153,7 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    async DELETE_MESSAGE(credentials: { message_id: number }) {
+    async DELETE_MESSAGE(credentials: { chat_id: number; message_id: number }) {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(
@@ -232,7 +236,7 @@ export const useAppStore = defineStore('app', {
     },
 
     // AUTH
-    async FETCH_USERS(findBy: { username: string, user_id: number }) {
+    async FETCH_USERS(findBy: { username: string; user_id: number }) {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(
@@ -298,14 +302,18 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    async REG_USER(credentials: { username: string; email: string; password: string }) {
+    async REG_USER(credentials: {
+      username: string;
+      email: string;
+      password: string;
+    }) {
       try {
         this.loading = true;
         let { data } = await axiosInstance.post(
           BASE_URL + `/auth/register`,
           credentials,
         );
-        
+
         this.token = data.jwtToken;
         setCookie(cookies_consts.jwt, data.jwtToken, 14);
         router.push(this.returnUrl || '/');
@@ -313,9 +321,9 @@ export const useAppStore = defineStore('app', {
         this.loading = false;
       } catch (error: any) {
         if (error.status == 409) {
-          alert('Пользователь с таким e-mail уже существует')
+          alert('Пользователь с таким e-mail уже существует');
           this.loading = false;
-          return
+          return;
         }
         this.error = error;
         this.loading = false;

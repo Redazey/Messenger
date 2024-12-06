@@ -28,8 +28,11 @@ export class MessagesController {
   }
 
   @Post('delete')
-  deleteMessage(@Body() credentials: { message_id: number }) {
-    return this.messageService.delete(credentials.message_id);
+  deleteMessage(@Body() credentials: { chat_id: number; message_id: number }) {
+    return this.messageService.delete(
+      credentials.chat_id,
+      credentials.message_id
+    );
   }
 
   @Get('get/:chat_id')

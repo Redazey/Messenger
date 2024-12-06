@@ -106,7 +106,8 @@ const copyMsg = async () => {
 };
 
 const replyMsg = () => {
-  messageStore.replyingMessage = messageStore.getMessages.find((element) => element.message_id === props.messageId);
+  messageStore.replyingMessage = messageStore.getMessages[messageStore.getChat?.chat_id as number]
+    .find((element) => element.message_id === props.messageId);
   emit('close');
 };
 
@@ -116,7 +117,8 @@ const forwardMsg = () => {
 
 const sendForwardedMessage = () => {
   if (selectedChat.value) {
-    let msg = messageStore.getMessages.find((element) => element.message_id === props.messageId) as Messages;
+    let msg = messageStore.getMessages[messageStore.getChat?.chat_id as number]
+      .find((element) => element.message_id === props.messageId) as Messages;
     msg.message_text += ` Переслано от ${props.senderName}`;
     msg.user_id = messageStore.getUser?.user_id as number
     msg.chat_id = selectedChat.value.chat_id as number;
@@ -135,14 +137,18 @@ const selectChat = (chat: Chats) => {
 };
 
 const editMsg = () => {
-  messageStore.message = messageStore.getMessages.find((element) => element.message_id === props.messageId);
+  messageStore.message = messageStore.getMessages[messageStore.getChat?.chat_id as number]
+    .find((element) => element.message_id === props.messageId);
   emit('edit', messageStore.message?.message_text);
   emit('close');
 };
 
 const deleteMsg = () => {
-  messageStore.DELETE_MESSAGE({ message_id: props.messageId });
-  messageStore.FETCH_MESSAGES(messageStore.getChat?.chat_id as number);
+  messageStore.DELETE_MESSAGE(
+    { 
+      chat_id: messageStore.getChat?.chat_id as number, 
+      message_id: props.messageId 
+    });
   emit('close');
 };
 </script>

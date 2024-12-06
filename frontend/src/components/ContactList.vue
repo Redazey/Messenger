@@ -66,8 +66,10 @@
           v-for="chat in userChats"
           :key="chat.chat_id"
           :title="chat.chat_name"
+          :class="{
+            'selected-chat': userStorage.getChat?.chat_id == chat.chat_id,
+          }"
           @click="selectUserChat(chat)"
-          class="cursor-poiner bg-background"
         />
         <v-list-item v-if="isLoading" titile="Loading..." />
       </v-list>
@@ -97,9 +99,12 @@ const selectedUser = ref<Users>({
 const userChats = computed(() => userStorage.chats);
 const filteredUsers = computed(() => userStorage.users);
 
-onMounted(() => {
-  const user = userStorage.user?.user_id as number;
-  userStorage.FETCH_CHATS(user);
+onMounted(async () => {
+  await userStorage.FETCH_CHATS(userStorage.user?.user_id as number);
+  console.log(userStorage.getChats);
+  userStorage.getChats.forEach(async (chat) => {
+    await userStorage.REACTIVE_MESSAGES(chat.chat_id);
+  });
 });
 
 const find = async () => {
@@ -110,7 +115,10 @@ const find = async () => {
   isLoading.value = true;
 
   try {
-    await userStorage.FETCH_USERS({ username: username.value, user_id: userStorage.getUser?.user_id as number });
+    await userStorage.FETCH_USERS({
+      username: username.value,
+      user_id: userStorage.getUser?.user_id as number,
+    });
   } catch (error) {
     console.error('Search failed:', error);
   } finally {
@@ -164,7 +172,7 @@ const closeDialog = () => {
 </script>
 
 <style scoped>
-.cursor-pointer {
-  cursor: pointer;
+.selected-chat {
+  background-color: #f1e5d8;
 }
 </style>
