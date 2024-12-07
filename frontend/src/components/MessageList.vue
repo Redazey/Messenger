@@ -1,5 +1,5 @@
 <template>
-  <v-list>
+  <v-list style="height: 650px;">
     <v-list-item
       v-for="(message, index) in messages"
       :key="message.message_id"

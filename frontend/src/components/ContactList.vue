@@ -66,6 +66,7 @@
           v-for="chat in userChats"
           :key="chat.chat_id"
           :title="chat.chat_name"
+          :subtitle="userStorage.getMessages[chat.chat_id][userStorage.getMessages[chat.chat_id].length - 1].message_text"
           :class="{
             'selected-chat': userStorage.getChat?.chat_id == chat.chat_id,
           }"
@@ -101,8 +102,8 @@ const filteredUsers = computed(() => userStorage.users);
 
 onMounted(async () => {
   await userStorage.FETCH_CHATS(userStorage.user?.user_id as number);
-  console.log(userStorage.getChats);
   userStorage.getChats.forEach(async (chat) => {
+    await userStorage.FETCH_MESSAGES(chat.chat_id);
     await userStorage.REACTIVE_MESSAGES(chat.chat_id);
   });
 });

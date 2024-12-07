@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="visible"
-    :style="{ top: position.y - 50 + 'px', left: position.x - 200 + 'px' }"
+    :style="{ top: position.y + 'px', left: position.x + 'px' }"
     class="context-menu"
   >
     <v-list>
@@ -95,9 +95,33 @@ const dialog = ref(false);
 const messageStore = useAppStore();
 const chats = computed(() => messageStore.getChats);
 const selectedChat = ref<Chats | null>(null);
+const menuWidth = 50;
+const menuHeight = 260;
+const { innerWidth, innerHeight } = window;
 
 onMounted(async () => {
   await messageStore.FETCH_CHATS(messageStore.getUser?.user_id as number);
+  // Позиция по X
+  if (props.position.value.x + menuWidth > innerWidth) {
+    props.position.value.x = innerWidth - menuWidth;
+  }
+  // Позиция по Y
+  if (props.position.value.y + menuHeight > innerHeight) {
+    props.position.value.y = props.position.value.y - menuHeight;
+  }
+});
+
+const hideContextMenu = async (event: any) => {
+  if (!event.target.closest('.context-menu')) {
+    emit('close');
+  }
+};
+
+window.addEventListener('click', hideContextMenu);
+    
+// Очистка обработчика событий при уничтожении компонента
+onBeforeUnmount(() => {
+  window.removeEventListener('click', hideContextMenu);
 });
 
 const copyMsg = async () => {
@@ -159,6 +183,7 @@ const deleteMsg = () => {
   background-color: white;
   border: 1px solid #ccc;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
 }
 
 .selected-chat {
