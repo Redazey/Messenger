@@ -35,7 +35,6 @@ export const useAppStore = defineStore('app', {
     contacts: ref<Users[]>([]),
     messages: ref<{ [key: number]: Messages[] }>([]),
     message: ref<Messages>(),
-    replyingMessage: ref<Messages>(),
     loading: ref(false),
     eventsources: ref<EventSource[]>([]),
     error: ref<string | null>(null),

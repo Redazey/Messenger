@@ -1,7 +1,6 @@
 <template>
   <v-row align="center" justify="center" v-if="visible" class="ma-2">
     <v-btn @click="copyMsg">Копировать</v-btn>
-    <v-btn @click="replyMsg">Ответить</v-btn>
     <v-btn @click="forwardMsg">Переслать</v-btn>
     <v-btn v-if="haveAccess" @click="editMsg">Редактировать</v-btn>
     <v-btn v-if="haveAccess" @click="deleteMsg">Удалить</v-btn>
@@ -95,13 +94,6 @@ onMounted(async () => {
 
 const copyMsg = async () => {
   await navigator.clipboard.writeText(props.messageText);
-  emit('close');
-};
-
-const replyMsg = () => {
-  messageStore.replyingMessage = messageStore.getMessages[
-    messageStore.getChat?.chat_id as number
-  ].find((element) => element.message_id === props.messageId);
   emit('close');
 };
 

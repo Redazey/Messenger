@@ -39,7 +39,16 @@
       </div>
     </v-list-item>
   </v-list>
-  <v-row class="pa-5" v-if="!isReplying">
+  <v-row align="center" style="margin: 5px 0 0 10px;" v-if="isEditing">
+    <v-label
+      text="Редактирование сообщения"
+    />
+    <v-icon
+      @click="stopEditing()"
+      >mdi-close</v-icon
+    >
+  </v-row>
+  <v-row class="pa-5">
     <v-textarea
       max-rows="4"
       v-model="text"
@@ -70,7 +79,6 @@ const messages = computed(
   () => messagesStore.messages[messagesStore.getChat?.chat_id as number],
 );
 const isEditing = computed(() => messagesStore.message);
-const isReplying = computed(() => messagesStore.replyingMessage);
 const chatMembers = ref<Users[]>([]);
 const text = ref('');
 
@@ -90,6 +98,11 @@ onMounted(() => {
     chatMembers.value = messagesStore.users;
   });
 });
+
+const stopEditing = () => {
+  messagesStore.message = undefined;
+  text.value = '';
+}
 
 const sendMessage = async () => {
   if (text.value.trim() === '') {
