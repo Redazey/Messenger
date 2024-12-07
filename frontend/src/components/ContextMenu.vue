@@ -106,7 +106,7 @@ const sendForwardedMessage = () => {
     let msg = messageStore.getMessages[
       messageStore.getChat?.chat_id as number
     ].find((element) => element.message_id === props.messageId) as Messages;
-    msg.message_text += ` Переслано от ${props.senderName}`;
+    msg.message_text += `Переслано от ${props.senderName}`;
     msg.user_id = messageStore.getUser?.user_id as number;
     msg.chat_id = selectedChat.value.chat_id as number;
     msg.message_id = undefined;

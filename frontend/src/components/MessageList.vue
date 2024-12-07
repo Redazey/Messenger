@@ -19,6 +19,7 @@
       class="message-item"
       :class="{
         'message-right': message.user_id == messagesStore.getUser?.user_id,
+        'selected-message': message.message_id == selectedMessage?.message_id
       }"
       @contextmenu.prevent="openMsgContextMenu(message)"
     >
@@ -171,5 +172,9 @@ const shouldDisplaySenderName = (index: number, userId: number) => {
   overflow-wrap: break-word;
   padding: 5px;
   border-radius: 5px;
+}
+
+.selected-message {
+  background-color: #F1E5D8;
 }
 </style>

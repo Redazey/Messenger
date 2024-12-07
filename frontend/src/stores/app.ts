@@ -90,7 +90,7 @@ export const useAppStore = defineStore('app', {
               );
 
               if (msg !== -1) {
-                this.messages[chat_id][msg].deleted = true;
+                this.messages[chat_id].splice(msg, 1);
               }
 
               break;
