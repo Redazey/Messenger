@@ -1,5 +1,18 @@
 <template>
-  <v-list style="height: 650px;">
+  <context-menu
+    :visible="isContextMenuVisible"
+    :sender-name="getUserName(selectedMessage?.user_id as number)"
+    :have-access="selectedMessage?.user_id == messagesStore.getUser?.user_id"
+    :message-text="selectedMessage?.message_text as string"
+    :message-id="selectedMessage?.message_id as number"
+    @close="isContextMenuVisible = false"
+    @edit="
+      (message_text) => {
+        text = message_text;
+      }
+    "
+  />
+  <v-list style="height: 650px">
     <v-list-item
       v-for="(message, index) in messages"
       :key="message.message_id"
@@ -7,7 +20,7 @@
       :class="{
         'message-right': message.user_id == messagesStore.getUser?.user_id,
       }"
-      @contextmenu.prevent="openMsgContextMenu($event, message)"
+      @contextmenu.prevent="openMsgContextMenu(message)"
     >
       <template v-if="shouldDisplaySenderName(index, message.user_id)">
         <strong>{{ getUserName(message.user_id) }}</strong
@@ -25,21 +38,6 @@
         <div>{{ message.message_text }}</div>
       </div>
     </v-list-item>
-
-    <context-menu
-      :visible="isContextMenuVisible"
-      :position="contextMenuPosition"
-      :sender-name="getUserName(selectedMessage?.user_id as number)"
-      :have-access="selectedMessage?.user_id == messagesStore.getUser?.user_id"
-      :message-text="selectedMessage?.message_text as string"
-      :message-id="selectedMessage?.message_id as number"
-      @close="isContextMenuVisible = false"
-      @edit="
-        (message_text) => {
-          text = message_text;
-        }
-      "
-    />
   </v-list>
   <v-row class="pa-5" v-if="!isReplying">
     <v-textarea
@@ -66,7 +64,6 @@ import { useAppStore } from '@/stores/app';
 import { Users } from '@/types';
 import { ref, computed, onMounted } from 'vue';
 import { Messages } from '@/types';
-import ContextMenu from './ContextMenu.vue';
 
 const messagesStore = useAppStore();
 const messages = computed(
@@ -79,7 +76,6 @@ const text = ref('');
 
 const selectedMessage = ref<Messages>();
 const isContextMenuVisible = ref(false);
-const contextMenuPosition = ref({ x: 0, y: 0 });
 
 const props = defineProps({
   chat_id: {
@@ -125,10 +121,9 @@ const editMessage = async () => {
   messagesStore.message = undefined;
 };
 
-const openMsgContextMenu = (event: MouseEvent, message: Messages) => {
+const openMsgContextMenu = (message: Messages) => {
   selectedMessage.value = message;
   isContextMenuVisible.value = true;
-  contextMenuPosition.value = { x: event.clientX, y: event.clientY };
 };
 
 const getUserName = (user_id: number) => {
