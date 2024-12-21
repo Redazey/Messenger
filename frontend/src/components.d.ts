@@ -13,7 +13,6 @@ declare module 'vue' {
     HeaderNav: typeof import('./components/HeaderNav.vue')['default']
     LoginForm: typeof import('./components/LoginForm.vue')['default']
     MessageList: typeof import('./components/MessageList.vue')['default']
-    MessageTextArea: typeof import('./components/MessageTextArea.vue')['default']
     RegisterForm: typeof import('./components/RegisterForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

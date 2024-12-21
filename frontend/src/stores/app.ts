@@ -120,7 +120,7 @@ export const useAppStore = defineStore('app', {
     async CREATE_MESSAGE(message: Messages) {
       try {
         this.loading = true;
-        let { data } = await axiosInstance.post(
+        await axiosInstance.post(
           BASE_URL + `/messages/send`,
           message,
         );
@@ -140,7 +140,7 @@ export const useAppStore = defineStore('app', {
     }) {
       try {
         this.loading = true;
-        let { data } = await axiosInstance.post(
+        await axiosInstance.post(
           BASE_URL + `/messages/edit`,
           editMessageDto,
         );
@@ -155,7 +155,7 @@ export const useAppStore = defineStore('app', {
     async DELETE_MESSAGE(credentials: { chat_id: number; message_id: number }) {
       try {
         this.loading = true;
-        let { data } = await axiosInstance.post(
+        await axiosInstance.post(
           BASE_URL + `/messages/delete`,
           credentials,
         );
@@ -333,7 +333,7 @@ export const useAppStore = defineStore('app', {
       this.loading = true;
       this.token = null;
       try {
-        let { data } = await axiosInstance.post(BASE_URL + `/users/logout`);
+        await axiosInstance.post(BASE_URL + `/users/logout`);
       } catch (error: any) {
         this.error = error;
         this.loading = false;
